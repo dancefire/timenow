@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Current Time</string>
+	<string name="system_time_label">Phone</string>
+	<string name="gps_time_label">GPS</string>
+	<string name="ntp_time_label">NTP</string>
+	<string name="default_time">--:--:--.---</string>
+	<string name="default_ntp_server">pool.ntp.org</string>
+</resources>
