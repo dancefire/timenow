@@ -7,7 +7,7 @@
 	<AnalogClock
 		android:layout_gravity="center"
 		android:layout_height="wrap_content"
-		android:layout_width="200sp">
+		android:layout_width="200dp">
 	</AnalogClock>
 	<TableLayout
 		android:id="@+id/TableLayout01"
@@ -18,14 +18,14 @@
 		android:layout_height="wrap_content">
 		<TableRow
 			android:id="@+id/TableRow01"
-			android:padding="5sp"
+			android:padding="5dp"
 			android:gravity="center"
 			android:layout_width="fill_parent"
 			android:layout_height="wrap_content">
 			<TextView
 				android:id="@+id/SystemTimeLabel"
 				android:text="@string/system_time_label"
-				android:paddingRight="10sp"
+				android:paddingRight="10dp"
 				android:textSize="20sp"
 				android:textColor="#FFFFFF"
 				android:textStyle="bold"
@@ -36,21 +36,24 @@
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content">
 			</TextView>
-			<TextView
-				android:id="@+id/SystemTime"
-				android:text="@string/default_time"
-				android:typeface="monospace"
-				android:singleLine="true"
-				android:paddingLeft="10sp"
-				android:paddingRight="10sp"
-				android:textSize="25sp"
-				android:textColor="#000000"
-				android:gravity="center"
-				android:background="@drawable/clock_text_background_2"
-				android:layout_gravity="right"
-				android:layout_width="fill_parent"
-				android:layout_height="wrap_content">
-			</TextView>
+			<LinearLayout
+				android:background="@color/text_background_normal">
+				<TextView
+					android:id="@+id/SystemTime"
+					android:text="@string/default_time"
+					android:typeface="monospace"
+					android:singleLine="true"
+					android:paddingLeft="10dp"
+					android:paddingRight="10dp"
+					android:textSize="25sp"
+					android:textColor="#000000"
+					android:gravity="center"
+					android:background="@drawable/clock_text_background"
+					android:layout_gravity="right"
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content">
+				</TextView>
+			</LinearLayout>
 			<ImageButton
 				android:src="@drawable/transparent_background"
 				android:background="@drawable/transparent_background">
@@ -59,14 +62,14 @@
 		</TableRow>
 		<TableRow
 			android:id="@+id/TableRow02"
-			android:padding="5sp"
+			android:padding="5dp"
 			android:gravity="center"
 			android:layout_width="fill_parent"
 			android:layout_height="wrap_content">
 			<TextView
 				android:id="@+id/NTPTimeLabel"
 				android:text="@string/ntp_time_label"
-				android:paddingRight="10sp"
+				android:paddingRight="10dp"
 				android:textSize="20sp"
 				android:textColor="#FFFFFF"
 				android:textStyle="bold"
@@ -77,21 +80,24 @@
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content">
 			</TextView>
-			<TextView
-				android:id="@+id/NTPTime"
-				android:text="@string/default_time"
-				android:typeface="monospace"
-				android:singleLine="true"
-				android:paddingLeft="10sp"
-				android:paddingRight="10sp"
-				android:textSize="25sp"
-				android:textColor="#000000"
-				android:gravity="center"
-				android:background="@drawable/clock_text_background_2"
-				android:layout_gravity="right"
-				android:layout_width="fill_parent"
-				android:layout_height="wrap_content">
-			</TextView>
+			<LinearLayout
+				android:background="@color/text_background_normal">
+				<TextView
+					android:id="@+id/NTPTime"
+					android:text="@string/default_time"
+					android:typeface="monospace"
+					android:singleLine="true"
+					android:paddingLeft="10dp"
+					android:paddingRight="10dp"
+					android:textSize="25sp"
+					android:textColor="#000000"
+					android:gravity="center"
+					android:background="@drawable/clock_text_background"
+					android:layout_gravity="right"
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content">
+				</TextView>
+			</LinearLayout>
 			<ImageButton
 				android:id="@+id/SyncNTP"
 				android:src="@android:drawable/ic_popup_sync">
@@ -99,14 +105,14 @@
 		</TableRow>
 		<TableRow
 			android:id="@+id/TableRow03"
-			android:padding="5sp"
+			android:padding="5dp"
 			android:gravity="center"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content">
 			<TextView
 				android:id="@+id/GPSTimeLabel"
 				android:text="@string/gps_time_label"
-				android:paddingRight="10sp"
+				android:paddingRight="10dp"
 				android:textSize="20sp"
 				android:textColor="#FFFFFF"
 				android:textStyle="bold"
@@ -117,21 +123,24 @@
 				android:layout_width="fill_parent"
 				android:layout_height="wrap_content">
 			</TextView>
-			<TextView
-				android:id="@+id/GPSTime"
-				android:text="@string/default_time"
-				android:typeface="monospace"
-				android:singleLine="true"
-				android:paddingLeft="10sp"
-				android:paddingRight="10sp"
-				android:textSize="25sp"
-				android:textColor="#000000"
-				android:gravity="center"
-				android:background="@drawable/clock_text_background_2"
-				android:layout_gravity="right"
-				android:layout_width="fill_parent"
-				android:layout_height="wrap_content">
-			</TextView>
+			<LinearLayout
+				android:background="@color/text_background_normal">
+				<TextView
+					android:id="@+id/GPSTime"
+					android:text="@string/default_time"
+					android:typeface="monospace"
+					android:singleLine="true"
+					android:paddingLeft="10dp"
+					android:paddingRight="10dp"
+					android:textSize="25sp"
+					android:textColor="#000000"
+					android:gravity="center"
+					android:background="@drawable/clock_text_background"
+					android:layout_gravity="right"
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content">
+				</TextView>
+			</LinearLayout>
 			<ImageButton
 				android:id="@+id/SyncGPS"
 				android:src="@android:drawable/ic_popup_sync">

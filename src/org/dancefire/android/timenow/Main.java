@@ -33,15 +33,13 @@ public class Main extends Activity {
 	private OnTouchListener onTouchListener = new OnTouchListener() {
 		@Override
 		public boolean onTouch(View v, MotionEvent event) {
-			int padding = v.getPaddingLeft();
+			View p = (View)(v.getParent());
 			switch (event.getAction()) {
 			case MotionEvent.ACTION_DOWN:
-				v.setBackgroundResource(R.drawable.clock_text_background_1);
-				v.setPadding(padding, 0, padding, 0);
+				p.setBackgroundColor(getResources().getColor(R.color.text_background_focused));
 				break;
 			case MotionEvent.ACTION_UP:
-				v.setBackgroundResource(R.drawable.clock_text_background_2);
-				v.setPadding(padding, 0, padding, 0);
+				p.setBackgroundColor(getResources().getColor(R.color.text_background_normal));
 				break;
 			}
 

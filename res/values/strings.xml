@@ -6,4 +6,6 @@
 	<string name="ntp_time_label">NTP</string>
 	<string name="default_time">--:--:--.---</string>
 	<string name="default_ntp_server">pool.ntp.org</string>
+	<color name="text_background_normal">#f69c00</color>
+	<color name="text_background_focused">#a2f600</color>
 </resources>
