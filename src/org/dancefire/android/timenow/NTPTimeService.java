@@ -10,6 +10,7 @@ public class NTPTimeService extends Service {
 	private Thread thread = null;
 	private boolean running = false;
 	private static final int NTP_TIMEOUT = 10000;
+	private static final long MIN_INTERVAL = 1000*60*1;
 
 	@Override
 	public IBinder onBind(Intent arg0) {
@@ -36,7 +37,7 @@ public class NTPTimeService extends Service {
 						Log.i(Main.TAG, "sntp.requestTime() returns fail");
 					}
 					try {
-						Thread.sleep(30000);
+						Thread.sleep(MIN_INTERVAL);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}

@@ -11,7 +11,7 @@ import android.os.IBinder;
 import android.util.Log;
 
 public class GPSTimeService extends Service {
-	private static final long MIN_INTERVAL = 30000;
+	private static final long MIN_INTERVAL = 1000*60*10;
 	private LocationManager manager = null;
 	private LocationListener listener = new LocationListener() {
 		@Override
