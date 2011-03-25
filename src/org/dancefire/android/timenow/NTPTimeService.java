@@ -1,4 +1,4 @@
-package org.dancefire.android.currenttime;
+package org.dancefire.android.timenow;
 
 import android.app.Service;
 import android.content.Intent;

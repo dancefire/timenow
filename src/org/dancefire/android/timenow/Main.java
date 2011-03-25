@@ -1,4 +1,4 @@
-package org.dancefire.android.currenttime;
+package org.dancefire.android.timenow;
 
 import java.text.SimpleDateFormat;
 
@@ -9,14 +9,13 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Vibrator;
 import android.util.Log;
 import android.view.Display;
 import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.View;
-import android.view.View.OnTouchListener;
 import android.view.WindowManager;
+import android.view.View.OnTouchListener;
 import android.widget.TextView;
 
 public class Main extends Activity {
@@ -51,11 +50,11 @@ public class Main extends Activity {
 
 	public static final SimpleDateFormat fmt = new SimpleDateFormat(
 			"HH:mm:ss.SSS");
-	public static final String TIME_UPDATE_ACTION = "org.dancefire.android.currenttime.time_update";
+	public static final String TIME_UPDATE_ACTION = "org.dancefire.android.timenow.time_update";
 	public static final int SOURCE_SYS = 0;
 	public static final int SOURCE_NTP = 1;
 	public static final int SOURCE_GPS = 2;
-	public static final String TAG = "CurrentTime";
+	public static final String TAG = "TimeNow";
 
 	/** Called when the activity is first created. */
 	@Override
