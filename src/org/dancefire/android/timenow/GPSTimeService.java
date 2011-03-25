@@ -11,6 +11,7 @@ import android.os.IBinder;
 import android.util.Log;
 
 public class GPSTimeService extends Service {
+	private static final long MIN_INTERVAL = 30000;
 	private LocationManager manager = null;
 	private LocationListener listener = new LocationListener() {
 		@Override
@@ -47,7 +48,7 @@ public class GPSTimeService extends Service {
 	@Override
 	public void onCreate() {
 		manager = (LocationManager) getSystemService(LOCATION_SERVICE);
-		manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 30000, 0,
+		manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, MIN_INTERVAL, 0,
 				listener);
 		Log.i(Main.TAG, "GPS Service started.");
 		super.onCreate();

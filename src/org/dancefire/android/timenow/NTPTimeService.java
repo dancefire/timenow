@@ -9,6 +9,7 @@ import android.util.Log;
 public class NTPTimeService extends Service {
 	private Thread thread = null;
 	private boolean running = false;
+	private static final int NTP_TIMEOUT = 10000;
 
 	@Override
 	public IBinder onBind(Intent arg0) {
@@ -23,7 +24,7 @@ public class NTPTimeService extends Service {
 				Log.i(Main.TAG, "NTP Thread started.");
 				SntpClient sntp = new SntpClient();
 				while (running) {
-					if (sntp.requestTime("pool.ntp.org", 10000)) {
+					if (sntp.requestTime("pool.ntp.org", NTP_TIMEOUT)) {
 						long sys_time = System.currentTimeMillis();
 						long ntp_time = sntp.getNtpTime() + SystemClock.elapsedRealtime() - sntp.getNtpTimeReference();;
 						long diff = ntp_time - sys_time;

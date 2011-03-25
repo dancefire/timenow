@@ -25,6 +25,7 @@ public class Main extends Activity {
 
 	private long diff_ntp = 0;
 	private long diff_gps = 0;
+	private static final int UPDATE_DELAY = 100;
 
 	private Handler handler = null;
 	private BroadcastReceiver receiver = null;
@@ -50,10 +51,11 @@ public class Main extends Activity {
 
 	public static final SimpleDateFormat fmt = new SimpleDateFormat(
 			"HH:mm:ss.SSS");
-	public static final String TIME_UPDATE_ACTION = "org.dancefire.android.timenow.time_update";
+	public static final String TIME_UPDATE_ACTION = "org.dancefire.android.action.TIME_UPDATE";
 	public static final int SOURCE_SYS = 0;
 	public static final int SOURCE_NTP = 1;
 	public static final int SOURCE_GPS = 2;
+	public static final int UPDATE_UI_ACTION = 0;
 	public static final String TAG = "TimeNow";
 
 	/** Called when the activity is first created. */
@@ -95,8 +97,10 @@ public class Main extends Activity {
 		// Setup update handler
 		handler = new Handler() {
 			public void handleMessage(android.os.Message msg) {
-				updateTime();
-				handler.sendEmptyMessageDelayed(0, 30);
+				if (msg.what == UPDATE_UI_ACTION) {
+					updateTime();
+					handler.sendEmptyMessageDelayed(UPDATE_UI_ACTION, UPDATE_DELAY);
+				}
 			};
 		};
 		// Setup broadcast receiver
@@ -123,19 +127,13 @@ public class Main extends Activity {
 	@Override
 	protected void onResume() {
 		// Start Service
-		Intent intent;
-		intent = new Intent();
-		intent.setClass(Main.this, GPSTimeService.class);
-		startService(intent);
-
-		intent = new Intent();
-		intent.setClass(Main.this, NTPTimeService.class);
-		startService(intent);
+		startService(new Intent(Main.this, GPSTimeService.class));
+		startService(new Intent(Main.this, NTPTimeService.class));
 
 		// Register Receiver
 		registerReceiver(receiver, new IntentFilter(Main.TIME_UPDATE_ACTION));
 		// Begin message loop
-		handler.sendEmptyMessage(0);
+		handler.sendEmptyMessage(UPDATE_UI_ACTION);
 
 		super.onResume();
 	}
@@ -143,22 +141,16 @@ public class Main extends Activity {
 	@Override
 	protected void onPause() {
 		// Stop Service
-		Intent intent;
-		intent = new Intent();
-		intent.setClass(Main.this, GPSTimeService.class);
-		stopService(intent);
+		stopService(new Intent(Main.this, GPSTimeService.class));
 		Log.i(Main.TAG, "Stoping GPS service");
-
-		intent = new Intent();
-		intent.setClass(Main.this, NTPTimeService.class);
-		stopService(intent);
+		stopService(new Intent(Main.this, NTPTimeService.class));
 		Log.i(Main.TAG, "Stoping NTP service");
 
 		// Unregister Receiver
 		unregisterReceiver(receiver);
 		Log.i(Main.TAG, "Unregistering receiver");
 		// stop message loop
-		handler.removeMessages(0);
+		handler.removeMessages(UPDATE_UI_ACTION);
 
 		super.onPause();
 	}
