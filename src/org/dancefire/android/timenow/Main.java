@@ -71,7 +71,7 @@ public class Main extends Activity {
 		setContentView(R.layout.main);
 		
 		Display display = ((WindowManager) getSystemService(WINDOW_SERVICE)).getDefaultDisplay();
-		int rotation = display.getRotation();
+		int rotation = display.getOrientation();
 		switch (rotation) {
 		case Surface.ROTATION_0:
 		case Surface.ROTATION_180:

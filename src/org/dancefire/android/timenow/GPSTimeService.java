@@ -55,11 +55,6 @@ public class GPSTimeService extends Service {
 	}
 
 	@Override
-	public void onStart(Intent intent, int startId) {
-		super.onStart(intent, startId);
-	}
-
-	@Override
 	public void onDestroy() {
 		manager.removeUpdates(listener);
 		Log.i(Main.TAG, "GPS Service onDestroy()");

@@ -50,12 +50,7 @@ public class NTPTimeService extends Service {
 		super.onCreate();
 	}
 
-	@Override
-	public int onStartCommand(Intent intent, int flags, int startId) {
-		return super.onStartCommand(intent, flags, startId);
-	}
-
-	@Override
+	//@Override
 	public void onDestroy() {
 		if (thread != null && thread.isAlive()) {
 			thread.interrupt();
