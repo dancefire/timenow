@@ -1,3 +1,6 @@
 *.class
 *.dex
 *.apk
+/bin/resources.ap_
+/gen/org/dancefire/android/timenow/R.java
+/.settings/com.google.gwt.eclipse.core.prefs
