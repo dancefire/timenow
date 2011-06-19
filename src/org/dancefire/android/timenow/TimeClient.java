@@ -1,5 +1,6 @@
 package org.dancefire.android.timenow;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
@@ -9,17 +10,22 @@ import android.os.Message;
 import android.os.SystemClock;
 import android.util.Log;
 
-public abstract class TimeClient implements Comparable<TimeClient>{
+public abstract class TimeClient implements Comparable<TimeClient> {
 	public static final int TIME_NONE = 0;
 	public static final int TIME_GPS = 1;
 	public static final int TIME_NTP = 2;
-	
+
 	protected static final long INTERVAL_SHORT = 1000 * 5;
 	protected static final long INTERVAL_LONG = 1000 * 60 * 60;
-	
+
 	protected static final int REPEATS = 10;
 
 	protected static final long TIME_POINT;
+
+	public static final SimpleDateFormat fmtShort = new SimpleDateFormat(
+			"HH:mm:ss.SSS");
+	public static final SimpleDateFormat fmtLong = new SimpleDateFormat(
+			"yyyy-MM-dd HH:mm:ss");
 
 	static {
 		Calendar cal = new GregorianCalendar(TimeZone.getTimeZone("GMT"));
@@ -43,7 +49,7 @@ public abstract class TimeClient implements Comparable<TimeClient>{
 			start();
 		};
 	};
-	
+
 	public abstract void start();
 
 	public abstract void stop();
@@ -51,36 +57,42 @@ public abstract class TimeClient implements Comparable<TimeClient>{
 	public abstract void onUpdated(int source, long diff, long accuracy);
 
 	public void update(long diff, long accuracy) {
-		
+
 		if ((diff + System.currentTimeMillis()) > TIME_POINT) {
-			//	If successfully received the time,
+			// If successfully received the time,
 			if (this.accuracy >= accuracy) {
 				this.diff = diff;
 				this.accuracy = accuracy;
 				this.lastUpdate = SystemClock.elapsedRealtime();
-				this.diff_sys_boot = SystemClock.currentThreadTimeMillis() - SystemClock.elapsedRealtime();
-				Log.i(Main.TAG, "TimeClient [" + source + "] = " + diff + " (" + accuracy + ")" + " [count = " + count + "]");
+				this.diff_sys_boot = System.currentTimeMillis()
+						- SystemClock.elapsedRealtime();
+				Log.i(Main.TAG, "TimeClient [" + source + "] = " + diff + " ("
+						+ accuracy + ")" + " [count = " + count + "]");
 				onUpdated(source, diff, accuracy);
 			} else {
-				Log.i(Main.TAG, "TimeClient [" + source + "] is not more accurate than previous one. " + this.accuracy + " < " + accuracy + " [count = " + count + "]");
+				Log.i(Main.TAG, "TimeClient [" + source
+						+ "] is not more accurate than previous one. "
+						+ this.accuracy + " < " + accuracy + " [count = "
+						+ count + "]");
 			}
 			++count;
-			//	if got enough accurate time, then slow down the update.
+			// if got enough accurate time, then slow down the update.
 			if (count > REPEATS && interval == INTERVAL_SHORT) {
 				Log.i(Main.TAG, "TimeClient [" + source + "] is slowing down.");
 				stop();
 				startHandler.sendEmptyMessageDelayed(0, INTERVAL_LONG);
 			}
 		} else {
-			Log.w(Main.TAG, "TimeClient [" + source + "] received wrong time. " + diff);
+			Log.w(Main.TAG, "TimeClient [" + source + "] received wrong time. "
+					+ diff);
 		}
 
 	}
-	
+
 	public int getSource() {
 		return source;
 	}
-	
+
 	public long getDifference() {
 		return diff;
 	}
@@ -92,9 +104,9 @@ public abstract class TimeClient implements Comparable<TimeClient>{
 	public long getLastUpdate() {
 		return lastUpdate;
 	}
-	
+
 	@Override
 	public int compareTo(TimeClient another) {
-		return (int)(this.accuracy - another.accuracy);
+		return (int) (this.accuracy - another.accuracy);
 	}
 }

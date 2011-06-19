@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent" android:orientation="horizontal">
+    <ImageView android:layout_width="wrap_content" android:layout_height="wrap_content" android:padding="3dp" android:layout_gravity="center_horizontal" android:src="@drawable/gps_32" android:id="@+id/time_result_item_icon"></ImageView>
+    <LinearLayout android:layout_width="match_parent" android:id="@+id/linearLayout1" android:layout_height="wrap_content" android:orientation="vertical">
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:textAppearance="?android:attr/textAppearanceMedium" android:text="@string/default_time" android:id="@+id/time_result_item_title"></TextView>
+        <LinearLayout android:layout_width="match_parent" android:id="@+id/linearLayout2" android:layout_height="wrap_content">
+            <TextView android:layout_height="wrap_content" android:textAppearance="?android:attr/textAppearanceSmall" android:layout_width="wrap_content" android:text="@string/default_time" android:id="@+id/time_result_item_subtitle1"></TextView>
+            <TextView android:textAppearance="?android:attr/textAppearanceSmall" android:gravity="right" android:layout_gravity="right" android:layout_height="wrap_content" android:layout_width="match_parent" android:text="@string/default_time" android:id="@+id/time_result_item_subtitle2"></TextView>
+        </LinearLayout>
+    </LinearLayout>
+    
+</LinearLayout>

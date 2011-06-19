@@ -8,4 +8,7 @@
 	<string name="default_ntp_server">pool.ntp.org</string>
 	<color name="text_background_normal">#f69c00</color>
 	<color name="text_background_focused">#a2f600</color>
+	<color name="text_foreground_dark">#000000</color>
+	<string name="phone_time_label">Phone Local Time:</string>
+	<string name="time_source_label">Accurate Time:</string>
 </resources>
