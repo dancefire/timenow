@@ -131,9 +131,11 @@ public class Main extends Activity {
 
 	public static final String TIME_UPDATE_ACTION = "org.dancefire.android.action.TIME_UPDATE";
 	public static final int UPDATE_UI_ACTION = 0;
+	public static final int SERVICE_START_ACTION = 1;
 	public static final String TAG = "TimeNow";
 
-	private Handler handler;
+	private Handler handlerUIUpdate;
+	private Handler handlerService;
 	private BroadcastReceiver receiver;
 	private ArrayList<TimeResult> time_list;
 	private TextView textPhoneTime;
@@ -165,7 +167,8 @@ public class Main extends Activity {
 		registerReceiver(receiver, new IntentFilter(Main.TIME_UPDATE_ACTION));
 
 		// Begin message loop
-		handler.sendEmptyMessage(UPDATE_UI_ACTION);
+		handlerUIUpdate.sendEmptyMessage(UPDATE_UI_ACTION);
+		handlerService.sendEmptyMessage(SERVICE_START_ACTION);
 		super.onResume();
 	}
 
@@ -180,20 +183,32 @@ public class Main extends Activity {
 		Log.d(Main.TAG, "Unregistering receiver");
 
 		// stop message loop
-		handler.removeMessages(UPDATE_UI_ACTION);
+		handlerUIUpdate.removeMessages(UPDATE_UI_ACTION);
+		handlerService.removeMessages(SERVICE_START_ACTION);
 		super.onPause();
 	}
 
 	private void setHandler() {
 		// Setup update handler
-		handler = new Handler() {
+		handlerUIUpdate = new Handler() {
 			public void handleMessage(android.os.Message msg) {
 				if (msg.what == UPDATE_UI_ACTION) {
 					updateTime();
-					handler.sendEmptyMessageDelayed(UPDATE_UI_ACTION,
+					handlerUIUpdate.sendEmptyMessageDelayed(UPDATE_UI_ACTION,
 							UPDATE_DELAY);
 				}
 			};
+		};
+		// Service handler
+		handlerService = new Handler() {
+			public void handleMessage(android.os.Message msg) {
+				if (msg.what == SERVICE_START_ACTION) {
+					// Start Service
+					handlerService.sendEmptyMessageDelayed(SERVICE_START_ACTION, TimeClient.INTERVAL_LONG);
+					Main.this.startService(new Intent(Main.this,
+							TimeService.class));
+				}
+			}
 		};
 	}
 

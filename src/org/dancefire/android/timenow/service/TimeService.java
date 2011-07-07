@@ -14,7 +14,7 @@ import android.os.IBinder;
 
 public class TimeService extends Service {
 	ArrayList<TimeClient> mList = new ArrayList<TimeClient>();
-	
+
 	@Override
 	public IBinder onBind(Intent intent) {
 		return null;
@@ -22,9 +22,8 @@ public class TimeService extends Service {
 
 	@Override
 	public void onCreate() {
-		addTimeClient();
-		for(int i = 0; i < mList.size(); ++i)
-		{
+		addClients();
+		for (int i = 0; i < mList.size(); ++i) {
 			mList.get(i).start();
 		}
 		super.onCreate();
@@ -32,46 +31,52 @@ public class TimeService extends Service {
 
 	@Override
 	public void onDestroy() {
-		for(int i = 0; i < mList.size(); ++i)
-		{
-			mList.get(i).stop();
+		for (int i = 0; i < mList.size(); ++i) {
+			TimeClient t = mList.get(i);
+			if (t.isRunning()) {
+				t.stop();
+			}
 		}
 		super.onDestroy();
 	}
-	
-	private void addTimeClient() {
-		//	Add NTP time client
+
+	private void addClients() {
+		// Add NTP time client
 		mList.add(new NtpTimeClient() {
-			
 			@Override
 			public void onUpdated(TimeResult result) {
-				onTimeChanged(result);
+				onTimeChanged(result, this);
 			}
 		});
-		//	Add GPS time client
-		mList.add(new GpsTimeClient(this) {
-			
+		// Add GPS time client
+		mList.add(new GpsTimeClient() {
 			@Override
 			public void onUpdated(TimeResult result) {
-				onTimeChanged(result);
+				onTimeChanged(result, this);
 			}
 		});
 	}
 
-//	private TimeClient getBestSource() {
-//		TimeClient best = mList.get(0);
-//		for (int i = 1; i < mList.size(); ++i) {
-//			if (best.compareTo(mList.get(i)) > 0) {
-//				best = mList.get(i);
-//			}
-//		}
-//		return best;
-//	}
+	private boolean isAllStopped() {
+		boolean all_stopped = true;
+		for (int i = 0; i < mList.size(); ++i) {
+			if (mList.get(i).isRunning()) {
+				all_stopped = false;
+				break;
+			}
+		}
+		return all_stopped;
+	}
 
-	private void onTimeChanged(TimeResult result) {
+	private void onTimeChanged(TimeResult result, TimeClient client) {
+		// send result
 		Intent intent = new Intent(Main.TIME_UPDATE_ACTION);
 		intent.putExtras(result.toBundle());
 		sendBroadcast(intent);
+		// if all client stopped, then stop the service.
+		if (isAllStopped()) {
+			stopSelf();
+		}
 	}
 
 }

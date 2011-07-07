@@ -10,19 +10,40 @@ public abstract class TimeClient {
 	public static final int TIME_GPS = 1;
 	public static final int TIME_NTP = 2;
 
-	protected static final long INTERVAL_SHORT = 1000 * 5;
-	protected static final long INTERVAL_LONG = 1000 * 60 * 60;
-	protected static final int REPEATS = 10;
+	public static final long INTERVAL_SHORT = 1000 * 5;
+	public static final long INTERVAL_LONG = 1000 * 60 * 60;
+	protected static int batch_repeats = 10;
 
 	protected int source = TIME_NONE;
+	protected int count = 0;
 	protected long interval = INTERVAL_SHORT;
 	protected boolean running = false;
 
-	public abstract void start();
+	protected abstract void onStart();
 
-	public abstract void stop();
+	protected abstract void onStop();
 
-	public abstract void onUpdated(TimeResult result);
+	protected abstract void onUpdated(TimeResult result);
+
+	public void start() {
+		if (!running) {
+			count = 0;
+			interval = INTERVAL_SHORT;
+			onStart();
+			running = true;
+		}
+	}
+
+	public void stop() {
+		if (running) {
+			onStop();
+			running = false;
+		}
+	}
+	
+	public boolean isRunning() {
+		return running;
+	}
 
 	public void update(TimeResult result) {
 		result.local_time = System.currentTimeMillis();
@@ -34,16 +55,16 @@ public abstract class TimeClient {
 					.d(Main.TAG, "TimeClient [" + result.source + "] = "
 							+ result.getLocalTimeError() + " ("
 							+ result.accuracy + ")");
+			++count;
+			if (count >= batch_repeats) {
+				stop();
+			}
 			onUpdated(result);
 		} else {
 			Log.e(Main.TAG, "TimeClient [" + result.source
 					+ "] received wrong time. " + result.getLocalTimeError());
 		}
 
-	}
-
-	public int getSource() {
-		return source;
 	}
 
 	public TimeResult createTimeResult(String id, long source_time,
@@ -53,5 +74,13 @@ public abstract class TimeClient {
 		result.source_time = source_time;
 		result.accuracy = accuracy;
 		return result;
+	}
+	
+	public static void setRepeats(int repeats) {
+		batch_repeats = repeats;
+	}
+	
+	public static int getRepeats() {
+		return batch_repeats;
 	}
 }

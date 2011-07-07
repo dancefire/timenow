@@ -11,7 +11,7 @@ import android.util.Log;
 
 public abstract class NtpTimeClient extends TimeClient {
 	private static final int NTP_TIMEOUT = 10000;
-	
+
 	public static final String IP = "ntp_ip";
 	public static final String NAME = "ntp_name";
 
@@ -29,45 +29,38 @@ public abstract class NtpTimeClient extends TimeClient {
 	}
 
 	@Override
-	public void start() {
-		if (!running) {
-
-			this.thread = new Thread() {
-				@Override
-				public void run() {
-					Log.d(Main.TAG, "NTP Thread [" + host + "] started.");
-					while (running) {
-						sntpRequest();
-						try {
-							Thread.sleep(interval);
-						} catch (InterruptedException e) {
-							e.printStackTrace();
-						}
+	protected void onStart() {
+		this.thread = new Thread() {
+			@Override
+			public void run() {
+				Log.d(Main.TAG, "NTP Thread [" + host + "] started.");
+				while (running) {
+					sntpRequest();
+					try {
+						Thread.sleep(interval);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
 					}
-					Log.d(Main.TAG, "NTP Thread [" + host + "] stoped.");
-				};
+				}
+				Log.d(Main.TAG, "NTP Thread [" + host + "] stoped.");
 			};
-			thread.start();
-			running = true;
-			Log.d(Main.TAG, "NTP Client [" + host + "] started.");
-		}
+		};
+		thread.start();
+		Log.d(Main.TAG, "NTP Client [" + host + "] started.");
 	}
 
 	@Override
-	public void stop() {
-		if (running) {
-			if (thread != null && thread.isAlive()) {
-				thread.interrupt();
-				try {
-					Thread.sleep(INTERVAL_SHORT);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
+	protected void onStop() {
+		if (thread != null && thread.isAlive()) {
+			thread.interrupt();
+			try {
+				Thread.sleep(INTERVAL_SHORT);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
 			}
-			thread = null;
-			running = false;
-			Log.d(Main.TAG, "NTP Client [" + host + "] stopped.");
 		}
+		thread = null;
+		Log.d(Main.TAG, "NTP Client [" + host + "] stopped.");
 	}
 
 	private void sntpRequest() {

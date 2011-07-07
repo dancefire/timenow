@@ -1,6 +1,7 @@
 package org.dancefire.android.timenow.timeclient;
 
 import org.dancefire.android.timenow.Main;
+import org.dancefire.android.timenow.TimeApplication;
 
 import android.content.Context;
 import android.location.Location;
@@ -12,17 +13,17 @@ import android.util.Log;
 public abstract class GpsTimeClient extends TimeClient implements
 		LocationListener {
 	private static final long GPS_ACCURACY = 500;
-	
-	public static final String LONGITUDE = "gps_longitude"; 
-	public static final String LATITUDE = "gps_latitude"; 
-	public static final String ALTITUDE = "gps_altitude"; 
-	public static final String ACCURACY = "gps_accuracy"; 
+
+	public static final String LONGITUDE = "gps_longitude";
+	public static final String LATITUDE = "gps_latitude";
+	public static final String ALTITUDE = "gps_altitude";
+	public static final String ACCURACY = "gps_accuracy";
 
 	private LocationManager locationManager = null;
 
-	public GpsTimeClient(Context context) {
+	public GpsTimeClient() {
 		this.source = TIME_GPS;
-		locationManager = (LocationManager) context
+		locationManager = (LocationManager) TimeApplication.getAppContext()
 				.getSystemService(Context.LOCATION_SERVICE);
 	}
 
@@ -41,12 +42,12 @@ public abstract class GpsTimeClient extends TimeClient implements
 
 	@Override
 	public void onProviderDisabled(String provider) {
-		stop();
+		onStop();
 	}
 
 	@Override
 	public void onProviderEnabled(String provider) {
-		start();
+		onStart();
 	}
 
 	@Override
@@ -54,21 +55,15 @@ public abstract class GpsTimeClient extends TimeClient implements
 	}
 
 	@Override
-	public void start() {
-		if (!running) {
-			locationManager.requestLocationUpdates(
-					LocationManager.GPS_PROVIDER, interval, 0, this);
-			running = true;
-			Log.d(Main.TAG, "GPS Client is started.");
-		}
+	protected void onStart() {
+		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
+				interval, 0, this);
+		Log.d(Main.TAG, "GPS Client is started.");
 	}
 
 	@Override
-	public void stop() {
-		if (running) {
-			locationManager.removeUpdates(this);
-			running = false;
-			Log.d(Main.TAG, "GPS Client is stopped.");
-		}
+	protected void onStop() {
+		locationManager.removeUpdates(this);
+		Log.d(Main.TAG, "GPS Client is stopped.");
 	}
 }
