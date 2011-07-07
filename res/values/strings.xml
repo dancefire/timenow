@@ -6,9 +6,61 @@
 	<string name="ntp_time_label">NTP</string>
 	<string name="default_time">--:--:--.---</string>
 	<string name="default_ntp_server">pool.ntp.org</string>
+	<string name="phone_time_label">Phone Local Time:</string>
+	<string name="time_source_label">Accurate Time:</string>
+	<string name="source_ntp">NTP</string>
+	<string name="source_gps">GPS</string>
+	<string name="source_time">Source Time</string>
+	<string name="phone_time">Phone Time</string>
+	<string name="uptime">Uptime</string>
+	<string name="accuracy">Accuracy</string>
+	<string name="ntp_ip">NTP Server IP</string>
+	<string name="ntp_name">NTP Server Name</string>
+	<string name="ntp_rtt">NTP request round trip time</string>
+	<string name="gps_longitude">Longitude</string>
+	<string name="gps_latitude">Latitude</string>
+	<string name="gps_altitude">Altitude</string>
+	<string name="gps_accuracy">Accuracy</string>
+	
+	<string name="timespan_prefix_positive"></string>
+	<string name="timespan_prefix_negative"></string>
+	<string name="timespan_postfix_positive">ahead</string>
+	<string name="timespan_postfix_negative">late</string>
+	
+	<plurals name="timespan_microsecond">
+		<item quantity="one">microsecond</item>
+		<item quantity="other">microseconds</item>
+	</plurals>
+	<plurals name="timespan_second">
+		<item quantity="one">second</item>
+		<item quantity="other">seconds</item>
+	</plurals>
+	<plurals name="timespan_minute">
+		<item quantity="one">minute</item>
+		<item quantity="other">minutes</item>
+	</plurals>
+	<plurals name="timespan_hour">
+		<item quantity="one">hour</item>
+		<item quantity="other">hours</item>
+	</plurals>
+	<plurals name="timespan_day">
+		<item quantity="one">day</item>
+		<item quantity="other">days</item>
+	</plurals>
+	<plurals name="timespan_week">
+		<item quantity="one">week</item>
+		<item quantity="other">weeks</item>
+	</plurals>
+	<plurals name="timespan_month">
+		<item quantity="one">month</item>
+		<item quantity="other">months</item>
+	</plurals>
+	<plurals name="timespan_year">
+		<item quantity="one">year</item>
+		<item quantity="other">years</item>
+	</plurals>
+
 	<color name="text_background_normal">#f69c00</color>
 	<color name="text_background_focused">#a2f600</color>
 	<color name="text_foreground_dark">#000000</color>
-	<string name="phone_time_label">Phone Local Time:</string>
-	<string name="time_source_label">Accurate Time:</string>
 </resources>

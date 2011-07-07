@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.dancefire.android.timenow;
+package org.dancefire.android.timenow.util;
 
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -63,6 +63,10 @@ public class SntpClient
 
     // round trip time in milliseconds
     private long mRoundTripTime;
+    
+    // ntp server ip
+    private InetAddress mIpAddress;
+    
 
     /**
      * Sends an SNTP request to the given host and processes the response.
@@ -75,9 +79,9 @@ public class SntpClient
         try {
             DatagramSocket socket = new DatagramSocket();
             socket.setSoTimeout(timeout);
-            InetAddress address = InetAddress.getByName(host);
+            mIpAddress = InetAddress.getByName(host);
             byte[] buffer = new byte[NTP_PACKET_SIZE];
-            DatagramPacket request = new DatagramPacket(buffer, buffer.length, address, NTP_PORT);
+            DatagramPacket request = new DatagramPacket(buffer, buffer.length, mIpAddress, NTP_PORT);
 
             // set mode = 3 (client) and version = 3
             // mode is in low 3 bits of first byte
@@ -154,6 +158,10 @@ public class SntpClient
      */
     public long getRoundTripTime() {
         return mRoundTripTime;
+    }
+    
+    public InetAddress getIpAddress() {
+    	return mIpAddress;
     }
 
     /**

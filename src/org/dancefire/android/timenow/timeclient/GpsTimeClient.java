@@ -1,4 +1,6 @@
-package org.dancefire.android.timenow;
+package org.dancefire.android.timenow.timeclient;
+
+import org.dancefire.android.timenow.MainActivity;
 
 import android.content.Context;
 import android.location.Location;
@@ -9,7 +11,12 @@ import android.util.Log;
 
 public abstract class GpsTimeClient extends TimeClient implements
 		LocationListener {
-	private static final long GPS_ACCURACY = 1000;
+	private static final long GPS_ACCURACY = 500;
+	
+	public static final String LONGITUDE = "gps_longitude"; 
+	public static final String LATITUDE = "gps_latitude"; 
+	public static final String ALTITUDE = "gps_altitude"; 
+	public static final String ACCURACY = "gps_accuracy"; 
 
 	private LocationManager locationManager = null;
 
@@ -21,7 +28,15 @@ public abstract class GpsTimeClient extends TimeClient implements
 
 	@Override
 	public void onLocationChanged(Location location) {
-		update(location.getTime() - System.currentTimeMillis(), GPS_ACCURACY);
+		TimeResult result = createTimeResult(LocationManager.GPS_PROVIDER,
+				location.getTime(), GPS_ACCURACY
+						+ (long) location.getAccuracy());
+		result.extra.putDouble(LONGITUDE, location.getLongitude());
+		result.extra.putDouble(LATITUDE, location.getLatitude());
+		result.extra.putDouble(ALTITUDE, location.getAltitude());
+		result.extra.putFloat(ACCURACY, location.getAccuracy());
+		Log.v(MainActivity.TAG, "GPS Location accuracy: " + location.getAccuracy());
+		update(result);
 	}
 
 	@Override
@@ -42,10 +57,9 @@ public abstract class GpsTimeClient extends TimeClient implements
 	public void start() {
 		if (!running) {
 			locationManager.requestLocationUpdates(
-					LocationManager.GPS_PROVIDER, interval, 0,
-					this);
+					LocationManager.GPS_PROVIDER, interval, 0, this);
 			running = true;
-			Log.i(Main.TAG, "GPS Client started.");
+			Log.d(MainActivity.TAG, "GPS Client is started.");
 		}
 	}
 
@@ -54,7 +68,7 @@ public abstract class GpsTimeClient extends TimeClient implements
 		if (running) {
 			locationManager.removeUpdates(this);
 			running = false;
-			Log.i(Main.TAG, "GPS Client stopped.");
+			Log.d(MainActivity.TAG, "GPS Client is stopped.");
 		}
 	}
 }

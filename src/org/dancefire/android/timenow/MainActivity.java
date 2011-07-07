@@ -2,6 +2,13 @@ package org.dancefire.android.timenow;
 
 import java.util.ArrayList;
 
+import org.dancefire.android.timenow.service.TimeService;
+import org.dancefire.android.timenow.timeclient.GpsTimeClient;
+import org.dancefire.android.timenow.timeclient.NtpTimeClient;
+import org.dancefire.android.timenow.timeclient.TimeClient;
+import org.dancefire.android.timenow.timeclient.TimeResult;
+import org.dancefire.android.timenow.timeclient.Util;
+
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -86,10 +93,29 @@ public class MainActivity extends Activity {
 				holder.icon.setImageResource(R.drawable.icon);
 				break;
 			}
-			holder.title.setText(TimeClient.fmtLong.format(item
-					.getCurrentTime()));
-			holder.subtitle1.setText(TimeResult.getTimeSpanString(item.getDifference()));
-			holder.subtitle2.setText(TimeResult.getTimeSpanString(item.phone_time - System.currentTimeMillis()));
+			holder.title.setText(Util.formatDateTime(item
+					.getCurrentSourceTime(), Util.DateFormatStyle.FULL));
+			holder.subtitle1.setText(Util.getTimeSpanString(item
+					.getLocalTimeError())
+					+ " " + item.id);
+			StringBuilder sb = new StringBuilder();
+			switch (item.source) {
+			case TimeClient.TIME_GPS:
+				sb.append(item.extra.getFloat(GpsTimeClient.ACCURACY));
+				// sb.append("(");
+				// sb.append(item.extra.getDouble(GpsTimeClient.LONGITUDE));
+				// sb.append(",");
+				// sb.append(item.extra.getDouble(GpsTimeClient.LATITUDE));
+				// sb.append(")");
+				break;
+			case TimeClient.TIME_NTP:
+				sb.append(item.extra.getString(NtpTimeClient.NAME));
+				break;
+			default:
+				sb.append(Util.getTimeSpanString(item.local_time
+						- System.currentTimeMillis()));
+			}
+			holder.subtitle2.setText(sb.toString());
 
 			return convertView;
 		}
@@ -136,7 +162,7 @@ public class MainActivity extends Activity {
 		startService(new Intent(this, TimeService.class));
 
 		// Register Receiver
-		registerReceiver(receiver, new IntentFilter(Main.TIME_UPDATE_ACTION));
+		registerReceiver(receiver, new IntentFilter(MainActivity.TIME_UPDATE_ACTION));
 
 		// Begin message loop
 		handler.sendEmptyMessage(UPDATE_UI_ACTION);
@@ -147,11 +173,11 @@ public class MainActivity extends Activity {
 	protected void onPause() {
 		// Stop Service
 		stopService(new Intent(this, TimeService.class));
-		Log.i(Main.TAG, "Stoping Time service");
+		Log.d(MainActivity.TAG, "Stoping Time service");
 
 		// Unregister Receiver
 		unregisterReceiver(receiver);
-		Log.i(Main.TAG, "Unregistering receiver");
+		Log.d(MainActivity.TAG, "Unregistering receiver");
 
 		// stop message loop
 		handler.removeMessages(UPDATE_UI_ACTION);
@@ -176,24 +202,16 @@ public class MainActivity extends Activity {
 		receiver = new BroadcastReceiver() {
 			@Override
 			public void onReceive(Context context, Intent intent) {
-				int source = intent.getIntExtra("source", TimeClient.TIME_NONE);
-				long diff = intent.getLongExtra("diff", 0);
-				Log.i(Main.TAG, "Received broadcast from [" + source + "] = "
-						+ diff);
-				switch (source) {
-				case TimeClient.TIME_NTP:
-					// diff_ntp = diff;
-					TimeResult item_ntp = new TimeResult(TimeClient.TIME_NTP);
-					item_ntp.source_time = item_ntp.phone_time + diff;
-					item_ntp.accuracy = 10;
-					time_list.add(item_ntp);
-					break;
-				case TimeClient.TIME_GPS:
-					TimeResult item_gps = new TimeResult(TimeClient.TIME_GPS);
-					item_gps.source_time = item_gps.phone_time + diff;
-					item_gps.accuracy = 10;
-					time_list.add(item_gps);
-					break;
+				TimeResult result = TimeResult.fromBundle(intent.getExtras());
+				long diff = result.getLocalTimeError();
+				Log.d(MainActivity.TAG, "Received broadcast from [" + result.source
+						+ "] = " + diff);
+
+				int index = time_list.indexOf(result);
+				if (index >= 0) {
+					time_list.set(index, result);
+				} else {
+					time_list.add(result);
 				}
 				updateTime();
 			}
@@ -201,8 +219,8 @@ public class MainActivity extends Activity {
 	}
 
 	private void updateTime() {
-		textPhoneTime.setText(TimeClient.fmtLong.format(System
-				.currentTimeMillis()));
+		textPhoneTime.setText(Util.formatDateTime(System.currentTimeMillis(),
+				Util.DateFormatStyle.FULL));
 		time_result_adapter.notifyDataSetChanged();
 	}
 }

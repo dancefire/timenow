@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">精确时间</string>
+	<string name="system_time_label">本地时间</string>
+	<string name="gps_time_label">GPS 时间</string>
+	<string name="ntp_time_label">NTP 时间</string>
+	<string name="default_time">--:--:--.---</string>
+	<string name="default_ntp_server">cn.pool.ntp.org</string>
+	<string name="phone_time_label">本地时间:</string>
+	<string name="time_source_label">精确时间:</string>
+	<string name="source_ntp">NTP</string>
+	<string name="source_gps">GPS</string>
+	<string name="source_time">时间源当前时间</string>
+	<string name="local_time">手机本地时间</string>
+	<string name="local_uptime">本机运行时间</string>
+	<string name="accuracy">精确度</string>
+	<string name="ntp_ip">NTP 服务器地址</string>
+	<string name="ntp_name">NTP 服务器名称</string>
+	<string name="ntp_rtt">NTP 请求往返时间</string>
+	<string name="gps_longitude">经度</string>
+	<string name="gps_latitude">纬度</string>
+	<string name="gps_altitude">海拔</string>
+	<string name="gps_accuracy">误差范围</string>
+	
+	<string name="timespan_prefix_positive">快</string>
+	<string name="timespan_prefix_negative">慢</string>
+	<string name="timespan_postfix_positive"></string>
+	<string name="timespan_postfix_negative"></string>
+
+	<plurals name="timespan_microsecond">
+		<item quantity="other">毫秒</item>
+	</plurals>
+	<plurals name="timespan_second">
+		<item quantity="other">秒</item>
+	</plurals>
+	<plurals name="timespan_minute">
+		<item quantity="other">分钟</item>
+	</plurals>
+	<plurals name="timespan_hour">
+		<item quantity="other">小时</item>
+	</plurals>
+	<plurals name="timespan_day">
+		<item quantity="other">日</item>
+	</plurals>
+	<plurals name="timespan_week">
+		<item quantity="other">周</item>
+	</plurals>
+	<plurals name="timespan_month">
+		<item quantity="other">月</item>
+	</plurals>
+	<plurals name="timespan_year">
+		<item quantity="other">年</item>
+	</plurals>
+
+	<color name="text_background_normal">#f69c00</color>
+	<color name="text_background_focused">#a2f600</color>
+	<color name="text_foreground_dark">#000000</color>
+</resources>
