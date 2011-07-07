@@ -1,6 +1,6 @@
 package org.dancefire.android.timenow.timeclient;
 
-import org.dancefire.android.timenow.MainActivity;
+import org.dancefire.android.timenow.Main;
 
 import android.os.SystemClock;
 import android.util.Log;
@@ -31,12 +31,12 @@ public abstract class TimeClient {
 		if (result.getCurrentSourceTime() > Util.TIME_POINT) {
 			// If successfully received the time,
 			Log
-					.d(MainActivity.TAG, "TimeClient [" + result.source + "] = "
+					.d(Main.TAG, "TimeClient [" + result.source + "] = "
 							+ result.getLocalTimeError() + " ("
 							+ result.accuracy + ")");
 			onUpdated(result);
 		} else {
-			Log.e(MainActivity.TAG, "TimeClient [" + result.source
+			Log.e(Main.TAG, "TimeClient [" + result.source
 					+ "] received wrong time. " + result.getLocalTimeError());
 		}
 

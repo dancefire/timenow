@@ -3,7 +3,7 @@ package org.dancefire.android.timenow.timeclient;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
-import org.dancefire.android.timenow.MainActivity;
+import org.dancefire.android.timenow.Main;
 import org.dancefire.android.timenow.util.SntpClient;
 
 import android.os.SystemClock;
@@ -35,7 +35,7 @@ public abstract class NtpTimeClient extends TimeClient {
 			this.thread = new Thread() {
 				@Override
 				public void run() {
-					Log.d(MainActivity.TAG, "NTP Thread [" + host + "] started.");
+					Log.d(Main.TAG, "NTP Thread [" + host + "] started.");
 					while (running) {
 						sntpRequest();
 						try {
@@ -44,12 +44,12 @@ public abstract class NtpTimeClient extends TimeClient {
 							e.printStackTrace();
 						}
 					}
-					Log.d(MainActivity.TAG, "NTP Thread [" + host + "] stoped.");
+					Log.d(Main.TAG, "NTP Thread [" + host + "] stoped.");
 				};
 			};
 			thread.start();
 			running = true;
-			Log.d(MainActivity.TAG, "NTP Client [" + host + "] started.");
+			Log.d(Main.TAG, "NTP Client [" + host + "] started.");
 		}
 	}
 
@@ -66,7 +66,7 @@ public abstract class NtpTimeClient extends TimeClient {
 			}
 			thread = null;
 			running = false;
-			Log.d(MainActivity.TAG, "NTP Client [" + host + "] stopped.");
+			Log.d(Main.TAG, "NTP Client [" + host + "] stopped.");
 		}
 	}
 
@@ -90,7 +90,7 @@ public abstract class NtpTimeClient extends TimeClient {
 			}
 			update(result);
 		} else {
-			Log.e(MainActivity.TAG, "sntp.requestTime(" + host + ") returns fail");
+			Log.e(Main.TAG, "sntp.requestTime(" + host + ") returns fail");
 		}
 	}
 

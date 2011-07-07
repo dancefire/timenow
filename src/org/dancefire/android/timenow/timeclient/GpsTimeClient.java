@@ -1,6 +1,6 @@
 package org.dancefire.android.timenow.timeclient;
 
-import org.dancefire.android.timenow.MainActivity;
+import org.dancefire.android.timenow.Main;
 
 import android.content.Context;
 import android.location.Location;
@@ -35,7 +35,7 @@ public abstract class GpsTimeClient extends TimeClient implements
 		result.extra.putDouble(LATITUDE, location.getLatitude());
 		result.extra.putDouble(ALTITUDE, location.getAltitude());
 		result.extra.putFloat(ACCURACY, location.getAccuracy());
-		Log.v(MainActivity.TAG, "GPS Location accuracy: " + location.getAccuracy());
+		Log.v(Main.TAG, "GPS Location accuracy: " + location.getAccuracy());
 		update(result);
 	}
 
@@ -59,7 +59,7 @@ public abstract class GpsTimeClient extends TimeClient implements
 			locationManager.requestLocationUpdates(
 					LocationManager.GPS_PROVIDER, interval, 0, this);
 			running = true;
-			Log.d(MainActivity.TAG, "GPS Client is started.");
+			Log.d(Main.TAG, "GPS Client is started.");
 		}
 	}
 
@@ -68,7 +68,7 @@ public abstract class GpsTimeClient extends TimeClient implements
 		if (running) {
 			locationManager.removeUpdates(this);
 			running = false;
-			Log.d(MainActivity.TAG, "GPS Client is stopped.");
+			Log.d(Main.TAG, "GPS Client is stopped.");
 		}
 	}
 }

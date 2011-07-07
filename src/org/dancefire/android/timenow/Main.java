@@ -27,7 +27,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class MainActivity extends Activity {
+public class Main extends Activity {
 	private static class TimeResultAdapter extends BaseAdapter {
 		private LayoutInflater m_inflater;
 		private Bitmap m_icon_gps;
@@ -162,7 +162,7 @@ public class MainActivity extends Activity {
 		startService(new Intent(this, TimeService.class));
 
 		// Register Receiver
-		registerReceiver(receiver, new IntentFilter(MainActivity.TIME_UPDATE_ACTION));
+		registerReceiver(receiver, new IntentFilter(Main.TIME_UPDATE_ACTION));
 
 		// Begin message loop
 		handler.sendEmptyMessage(UPDATE_UI_ACTION);
@@ -173,11 +173,11 @@ public class MainActivity extends Activity {
 	protected void onPause() {
 		// Stop Service
 		stopService(new Intent(this, TimeService.class));
-		Log.d(MainActivity.TAG, "Stoping Time service");
+		Log.d(Main.TAG, "Stoping Time service");
 
 		// Unregister Receiver
 		unregisterReceiver(receiver);
-		Log.d(MainActivity.TAG, "Unregistering receiver");
+		Log.d(Main.TAG, "Unregistering receiver");
 
 		// stop message loop
 		handler.removeMessages(UPDATE_UI_ACTION);
@@ -204,7 +204,7 @@ public class MainActivity extends Activity {
 			public void onReceive(Context context, Intent intent) {
 				TimeResult result = TimeResult.fromBundle(intent.getExtras());
 				long diff = result.getLocalTimeError();
-				Log.d(MainActivity.TAG, "Received broadcast from [" + result.source
+				Log.d(Main.TAG, "Received broadcast from [" + result.source
 						+ "] = " + diff);
 
 				int index = time_list.indexOf(result);

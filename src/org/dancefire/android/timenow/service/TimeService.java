@@ -2,7 +2,7 @@ package org.dancefire.android.timenow.service;
 
 import java.util.ArrayList;
 
-import org.dancefire.android.timenow.MainActivity;
+import org.dancefire.android.timenow.Main;
 import org.dancefire.android.timenow.timeclient.GpsTimeClient;
 import org.dancefire.android.timenow.timeclient.NtpTimeClient;
 import org.dancefire.android.timenow.timeclient.TimeClient;
@@ -69,7 +69,7 @@ public class TimeService extends Service {
 //	}
 
 	private void onTimeChanged(TimeResult result) {
-		Intent intent = new Intent(MainActivity.TIME_UPDATE_ACTION);
+		Intent intent = new Intent(Main.TIME_UPDATE_ACTION);
 		intent.putExtras(result.toBundle());
 		sendBroadcast(intent);
 	}
