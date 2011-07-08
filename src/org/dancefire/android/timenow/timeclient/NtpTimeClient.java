@@ -17,36 +17,41 @@ public abstract class NtpTimeClient extends TimeClient {
 
 	private Thread thread = null;
 	private String host;
+	private String ip = null;
 
 	public NtpTimeClient() {
 		this.source = TIME_NTP;
-		this.host = "pool.ntp.org";
+		setHost("pool.ntp.org");
 	}
 
 	public NtpTimeClient(String host) {
 		this.source = TIME_NTP;
-		this.host = host;
+		setHost(host);
+	}
+
+	public NtpTimeClient(InetAddress address) {
+		this.source = TIME_NTP;
+		this.host = address.getHostName();
+		this.ip = address.getHostAddress();
 	}
 
 	@Override
 	protected void onStart() {
-		this.thread = new Thread() {
+		thread = new Thread() {
 			@Override
 			public void run() {
-				Log.d(Main.TAG, "NTP Thread [" + host + "] started.");
 				while (running) {
 					sntpRequest();
 					try {
 						Thread.sleep(interval);
 					} catch (InterruptedException e) {
-						e.printStackTrace();
+						// interrupt
 					}
 				}
-				Log.d(Main.TAG, "NTP Thread [" + host + "] stoped.");
 			};
 		};
 		thread.start();
-		Log.d(Main.TAG, "NTP Client [" + host + "] started.");
+		Log.d(Main.TAG, this + " is started.");
 	}
 
 	@Override
@@ -56,28 +61,40 @@ public abstract class NtpTimeClient extends TimeClient {
 			try {
 				Thread.sleep(INTERVAL_SHORT);
 			} catch (InterruptedException e) {
-				e.printStackTrace();
+				// interrupt
 			}
 		}
 		thread = null;
-		Log.d(Main.TAG, "NTP Client [" + host + "] stopped.");
+		Log.d(Main.TAG, this + " is stopped.");
+	}
+	
+	@Override
+	public String toString() {
+		return "NTP Client [" + host + "/" + ip + "]";
+	}
+	
+	private void setHost(String host) {
+		this.host = host;
+		try {
+			this.ip = InetAddress.getByName(host).getHostAddress();
+		} catch (UnknownHostException e) {
+			Log.e(Main.TAG, this + " resolve name failed.");
+		}
 	}
 
 	private void sntpRequest() {
 		SntpClient sntp = new SntpClient();
-		if (sntp.requestTime(this.host, NTP_TIMEOUT)) {
+		if (sntp.requestTime(this.ip, NTP_TIMEOUT)) {
 			long ntp_time = sntp.getNtpTime() + SystemClock.elapsedRealtime()
 					- sntp.getNtpTimeReference();
 			;
 
-			InetAddress ip = sntp.getIpAddress();
-
-			TimeResult result = createTimeResult(ip.getHostAddress(), ntp_time,
+			TimeResult result = createTimeResult(ip, ntp_time,
 					sntp.getRoundTripTime());
-			result.extra.putString(IP, ip.getHostAddress());
+			result.extra.putString(IP, ip);
 			try {
-				result.extra.putString(NAME, InetAddress.getByAddress(
-						ip.getAddress()).getHostName());
+				result.extra.putString(NAME, InetAddress.getByName(
+						ip).getHostName());
 			} catch (UnknownHostException e) {
 				result.extra.putString(NAME, host);
 			}

@@ -3,7 +3,7 @@ package org.dancefire.android.timenow.timeclient;
 import android.os.Bundle;
 import android.os.SystemClock;
 
-public class TimeResult {
+public class TimeResult implements Comparable<TimeResult>{
 	public String id;
 	public int source;
 	public long local_time;
@@ -70,6 +70,11 @@ public class TimeResult {
 		result.extra = b.getBundle(EXTRA);
 
 		return result;
+	}
+
+	@Override
+	public int compareTo(TimeResult another) {
+		return (int) (this.accuracy - another.accuracy);
 	}
 
 }

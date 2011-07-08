@@ -29,8 +29,8 @@ public abstract class TimeClient {
 		if (!running) {
 			count = 0;
 			interval = INTERVAL_SHORT;
-			onStart();
 			running = true;
+			onStart();
 		}
 	}
 
@@ -52,7 +52,7 @@ public abstract class TimeClient {
 		if (result.getCurrentSourceTime() > Util.TIME_POINT) {
 			// If successfully received the time,
 			Log
-					.d(Main.TAG, "TimeClient [" + result.source + "] = "
+					.v(Main.TAG, "TimeClient [" + result.source + "] = "
 							+ result.getLocalTimeError() + " ("
 							+ result.accuracy + ")");
 			++count;
