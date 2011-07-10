@@ -5,7 +5,6 @@
 	<string name="gps_time_label">GPS</string>
 	<string name="ntp_time_label">NTP</string>
 	<string name="default_time">--:--:--.---</string>
-	<string name="default_ntp_server">pool.ntp.org</string>
 	<string name="phone_time_label">Phone Local Time:</string>
 	<string name="time_source_label">Accurate Time:</string>
 	<string name="source_ntp">NTP</string>
@@ -63,4 +62,25 @@
 	<color name="text_background_normal">#f69c00</color>
 	<color name="text_background_focused">#a2f600</color>
 	<color name="text_foreground_dark">#000000</color>
+	<string name="menu_setting">Settings</string>
+	<string name="menu_about">About</string>
+	<!-- Preferences -->
+	<string name="pref_title">Preferences</string>
+	<string name="pref_ntp_title">NTP Settings</string>
+	<string name="pref_ntp_summary">configure NTP relative settings.</string>
+	<string name="pref_ntp_summary_enabled">NTP is enabled</string>
+	<string name="pref_ntp_summary_disabled">NTP is disabled</string>
+	<string name="pref_ntp_server">NTP Server</string>
+	<string name="pref_ntp_server_default">pool.ntp.org</string>
+	<string name="pref_ntp_server_message">Please input NTP server address:</string>
+	<string name="pref_ntp_enable">Enable NTP</string>
+	<string name="pref_ntp_enable_default">true</string>
+	<string name="pref_gps_title">GPS Settings</string>
+	<string name="pref_gps_summary_enabled">GPS is enabled</string>
+	<string name="pref_gps_disabled">GPS is disabled</string>
+	<string name="pref_gps_enable">Enable GPS</string>
+	<string name="pref_gps_enable_default">true</string>
+	
+	<string name="about_title">About Time Now</string>
+	<string name="about_message">This is an app made by Tao Wang (dancefire@gmail.com).</string>
 </resources>

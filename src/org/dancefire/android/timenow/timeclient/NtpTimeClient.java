@@ -15,68 +15,76 @@ public abstract class NtpTimeClient extends TimeClient {
 	public static final String IP = "ntp_ip";
 	public static final String NAME = "ntp_name";
 
-	private Thread thread = null;
-	private String host;
-	private String ip = null;
+	private Thread m_thread = null;
+	private String m_host;
+	private String m_ip = null;
 
 	public NtpTimeClient() {
-		this.source = TIME_NTP;
+		this.m_source = TIME_NTP;
 		setHost("pool.ntp.org");
 	}
 
 	public NtpTimeClient(String host) {
-		this.source = TIME_NTP;
+		this.m_source = TIME_NTP;
 		setHost(host);
 	}
 
 	public NtpTimeClient(InetAddress address) {
-		this.source = TIME_NTP;
-		this.host = address.getHostName();
-		this.ip = address.getHostAddress();
+		this.m_source = TIME_NTP;
+		this.m_host = address.getHostName();
+		this.m_ip = address.getHostAddress();
 	}
-
+	
 	@Override
 	protected void onStart() {
-		thread = new Thread() {
+		m_thread = new Thread() {
 			@Override
 			public void run() {
-				while (running) {
+				while (m_running) {
 					sntpRequest();
 					try {
-						Thread.sleep(interval);
+						Thread.sleep(m_interval);
 					} catch (InterruptedException e) {
 						// interrupt
 					}
 				}
 			};
 		};
-		thread.start();
+		m_thread.start();
 		Log.d(Main.TAG, this + " is started.");
 	}
 
 	@Override
 	protected void onStop() {
-		if (thread != null && thread.isAlive()) {
-			thread.interrupt();
+		if (m_thread != null && m_thread.isAlive()) {
+			m_thread.interrupt();
 			try {
 				Thread.sleep(INTERVAL_SHORT);
 			} catch (InterruptedException e) {
 				// interrupt
 			}
 		}
-		thread = null;
+		m_thread = null;
 		Log.d(Main.TAG, this + " is stopped.");
 	}
 	
 	@Override
 	public String toString() {
-		return "NTP Client [" + host + "/" + ip + "]";
+		return "NTP Client [" + m_host + "/" + m_ip + "]";
+	}
+	
+	public String getHost() {
+		return this.m_host;
+	}
+	
+	public String getAddress() {
+		return this.m_ip;
 	}
 	
 	private void setHost(String host) {
-		this.host = host;
+		this.m_host = host;
 		try {
-			this.ip = InetAddress.getByName(host).getHostAddress();
+			this.m_ip = InetAddress.getByName(host).getHostAddress();
 		} catch (UnknownHostException e) {
 			Log.e(Main.TAG, this + " resolve name failed.");
 		}
@@ -84,23 +92,23 @@ public abstract class NtpTimeClient extends TimeClient {
 
 	private void sntpRequest() {
 		SntpClient sntp = new SntpClient();
-		if (sntp.requestTime(this.ip, NTP_TIMEOUT)) {
+		if (sntp.requestTime(this.m_ip, NTP_TIMEOUT)) {
 			long ntp_time = sntp.getNtpTime() + SystemClock.elapsedRealtime()
 					- sntp.getNtpTimeReference();
 			;
 
-			TimeResult result = createTimeResult(ip, ntp_time,
+			TimeResult result = createTimeResult(m_ip, ntp_time,
 					sntp.getRoundTripTime());
-			result.extra.putString(IP, ip);
+			result.extra.putString(IP, m_ip);
 			try {
 				result.extra.putString(NAME, InetAddress.getByName(
-						ip).getHostName());
+						m_ip).getHostName());
 			} catch (UnknownHostException e) {
-				result.extra.putString(NAME, host);
+				result.extra.putString(NAME, m_host);
 			}
 			update(result);
 		} else {
-			Log.e(Main.TAG, "sntp.requestTime(" + host + ") returns fail");
+			Log.e(Main.TAG, "sntp.requestTime(" + m_host + ") returns fail");
 		}
 	}
 

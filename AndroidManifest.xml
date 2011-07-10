@@ -10,6 +10,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".TimePreferenceActivity" android:label="@string/pref_title">
+        	<intent-filter>
+        		<action android:name="org.dancefire.android.timenow.action.preferences" />
+        		<category android:name="android.intent.category.PREFERENCE" />
+        	</intent-filter>
+        </activity>
         <service android:name=".service.TimeService"></service>
 
     </application>

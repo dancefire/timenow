@@ -1,6 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen
-  xmlns:android="http://schemas.android.com/apk/res/android">
-    <PreferenceCategory></PreferenceCategory>
-    
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+	android:key="timenow_preference" android:title="@string/pref_title">
+	<PreferenceCategory android:summary="@string/pref_ntp_summary"
+		android:key="pref_ntp_group" android:title="@string/pref_ntp_title">
+		<CheckBoxPreference android:title="@string/pref_ntp_enable"
+			android:key="pref_ntp_enable" android:summaryOn="@string/pref_ntp_summary_enabled"
+			android:summaryOff="@string/pref_ntp_summary_disabled"
+			android:defaultValue="@string/pref_ntp_enable_default"></CheckBoxPreference>
+		<EditTextPreference android:dependency="pref_ntp_enable"
+			android:dialogIcon="@drawable/ntp_32" android:defaultValue="@string/pref_ntp_server_default"
+			android:key="pref_ntp_server" android:dialogTitle="@string/pref_ntp_server"
+			android:title="@string/pref_ntp_server" android:dialogMessage="@string/pref_ntp_server_message" android:summary="@string/pref_ntp_server_default"></EditTextPreference>
+	</PreferenceCategory>
+	<PreferenceCategory android:key="pref_gps_group"
+		android:title="@string/pref_gps_title">
+		<CheckBoxPreference android:title="@string/pref_gps_enable"
+			android:key="pref_gps_enable" android:summaryOn="@string/pref_gps_summary_enabled"
+			android:summaryOff="@string/pref_gps_disabled" android:defaultValue="@string/pref_gps_enable_default"></CheckBoxPreference>
+	</PreferenceCategory>
+
 </PreferenceScreen>

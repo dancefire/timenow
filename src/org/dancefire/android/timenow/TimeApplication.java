@@ -4,14 +4,14 @@ import android.app.Application;
 import android.content.Context;
 
 public class TimeApplication extends Application {
-    private static Context context;
+    private static Context m_context;
 
     public void onCreate(){
-    	context = getApplicationContext();
+    	m_context = getApplicationContext();
     	super.onCreate();
     }
 
     public static Context getAppContext() {
-    	return context;
+    	return m_context;
     }
 }

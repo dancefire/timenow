@@ -14,10 +14,10 @@ public abstract class TimeClient {
 	public static final long INTERVAL_LONG = 1000 * 60 * 60;
 	protected static int batch_repeats = 10;
 
-	protected int source = TIME_NONE;
-	protected int count = 0;
-	protected long interval = INTERVAL_SHORT;
-	protected boolean running = false;
+	protected int m_source = TIME_NONE;
+	protected int m_count = 0;
+	protected long m_interval = INTERVAL_SHORT;
+	protected boolean m_running = false;
 
 	protected abstract void onStart();
 
@@ -26,23 +26,27 @@ public abstract class TimeClient {
 	protected abstract void onUpdated(TimeResult result);
 
 	public void start() {
-		if (!running) {
-			count = 0;
-			interval = INTERVAL_SHORT;
-			running = true;
+		if (!m_running) {
+			m_count = 0;
+			m_interval = INTERVAL_SHORT;
+			m_running = true;
 			onStart();
 		}
 	}
 
 	public void stop() {
-		if (running) {
+		if (m_running) {
 			onStop();
-			running = false;
+			m_running = false;
 		}
 	}
 	
 	public boolean isRunning() {
-		return running;
+		return m_running;
+	}
+	
+	public int getSourceType() {
+		return m_source;
 	}
 
 	public void update(TimeResult result) {
@@ -55,8 +59,8 @@ public abstract class TimeClient {
 					.v(Main.TAG, "TimeClient [" + result.source + "] = "
 							+ result.getLocalTimeError() + " ("
 							+ result.accuracy + ")");
-			++count;
-			if (count >= batch_repeats) {
+			++m_count;
+			if (m_count >= batch_repeats) {
 				stop();
 			}
 			onUpdated(result);
@@ -69,7 +73,7 @@ public abstract class TimeClient {
 
 	public TimeResult createTimeResult(String id, long source_time,
 			long accuracy) {
-		TimeResult result = new TimeResult(source);
+		TimeResult result = new TimeResult(m_source);
 		result.id = id;
 		result.source_time = source_time;
 		result.accuracy = accuracy;

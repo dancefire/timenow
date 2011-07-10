@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import org.dancefire.android.timenow.service.TimeService;
-import org.dancefire.android.timenow.timeclient.TimeClient;
 import org.dancefire.android.timenow.timeclient.TimeResult;
 import org.dancefire.android.timenow.timeclient.Util;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -16,97 +16,136 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.ListView;
 import android.widget.TextView;
 
 public class Main extends Activity {
 	public static final String TIME_UPDATE_ACTION = "org.dancefire.android.action.TIME_UPDATE";
 	public static final int UPDATE_UI_ACTION = 0;
-	public static final int SERVICE_START_ACTION = 1;
+	public static final int PREFERENCE_UPDATE = 2;
 	public static final String TAG = "TimeNow";
 
-	private Handler handlerUIUpdate;
-	private Handler handlerService;
-	private BroadcastReceiver receiver;
-	private ArrayList<TimeResult> time_list;
-	private TextView textPhoneTime;
-	private ListView listSourceTime;
-	private TimeResultAdapter time_result_adapter;
+	private Handler m_handlerUIUpdate;
+	private BroadcastReceiver m_receiver;
+	private ArrayList<TimeResult> m_time_list;
+	private TextView m_textPhoneTime;
+	private ListView m_listSourceTime;
+	private TimeResultAdapter m_time_result_adapter;
 
-	private static final int UPDATE_DELAY = 200;
+	private static final int UPDATE_DELAY = 1000;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main_layout);
-		time_list = new ArrayList<TimeResult>();
+		m_time_list = new ArrayList<TimeResult>();
 		setHandler();
 		setReceiver();
 
-		textPhoneTime = (TextView) findViewById(R.id.phone_time);
-		listSourceTime = (ListView) findViewById(R.id.list_time);
-		time_result_adapter = new TimeResultAdapter(this, this.time_list);
-		listSourceTime.setAdapter(time_result_adapter);
+		// Start Service
+		startService(new Intent(this, TimeService.class));
+
+
+		m_textPhoneTime = (TextView) findViewById(R.id.phone_time);
+		m_listSourceTime = (ListView) findViewById(R.id.list_time);
+		m_time_result_adapter = new TimeResultAdapter(this, this.m_time_list);
+		m_listSourceTime.setAdapter(m_time_result_adapter);
 	}
 
 	@Override
 	protected void onResume() {
-		// Start Service
-		startService(new Intent(this, TimeService.class));
-
 		// Register Receiver
-		registerReceiver(receiver, new IntentFilter(Main.TIME_UPDATE_ACTION));
+		registerReceiver(m_receiver, new IntentFilter(Main.TIME_UPDATE_ACTION));
 
 		// Begin message loop
-		handlerUIUpdate.sendEmptyMessage(UPDATE_UI_ACTION);
-		handlerService.sendEmptyMessage(SERVICE_START_ACTION);
+		m_handlerUIUpdate.sendEmptyMessage(UPDATE_UI_ACTION);
+		
+		//	Tell service the UI is visible now
+		sendBroadcast(new Intent(TimeService.TIME_UI_ACTION).putExtra(TimeService.IS_VISIBLE, true));
+		
 		super.onResume();
+	}
+
+	@Override
+	protected void onPause() {
+		// Unregister Receiver
+		unregisterReceiver(m_receiver);
+		Log.d(Main.TAG, "Unregistering receiver");
+
+		// stop message loop
+		m_handlerUIUpdate.removeMessages(UPDATE_UI_ACTION);
+
+		//	Tell service the UI is NOT visible now
+		sendBroadcast(new Intent(TimeService.TIME_UI_ACTION).putExtra(TimeService.IS_VISIBLE, false));
+		
+		super.onPause();
 	}
 	
 	@Override
-	protected void onPause() {
+	protected void onDestroy() {
 		// Stop Service
 		stopService(new Intent(this, TimeService.class));
 		Log.d(Main.TAG, "Stoping Time service");
 
-		// Unregister Receiver
-		unregisterReceiver(receiver);
-		Log.d(Main.TAG, "Unregistering receiver");
+		super.onDestroy();
+	}
 
-		// stop message loop
-		handlerUIUpdate.removeMessages(UPDATE_UI_ACTION);
-		handlerService.removeMessages(SERVICE_START_ACTION);
-		super.onPause();
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.main_menu, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		Log.w(Main.TAG, item.getItemId() + ": " + item.toString());
+		switch (item.getItemId()) {
+		case R.id.menu_setting:
+			Intent intent_pref = new Intent().setClass(this,
+					TimePreferenceActivity.class);
+			this.startActivityForResult(intent_pref, PREFERENCE_UPDATE);
+			break;
+		case R.id.menu_about:
+			new AlertDialog.Builder(this).setTitle(R.string.about_title)
+					.setMessage(R.string.about_message)
+					.setIcon(R.drawable.icon).setNeutralButton(
+							android.R.string.ok, null).show();
+			break;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
+		return true;
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (requestCode == PREFERENCE_UPDATE) {
+			// SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+			
+		}
+		super.onActivityResult(requestCode, resultCode, data);
 	}
 
 	private void setHandler() {
 		// Setup UI update handler
-		handlerUIUpdate = new Handler() {
+		m_handlerUIUpdate = new Handler() {
 			public void handleMessage(android.os.Message msg) {
 				if (msg.what == UPDATE_UI_ACTION) {
 					updateUI();
-					handlerUIUpdate.sendEmptyMessageDelayed(UPDATE_UI_ACTION,
+					m_handlerUIUpdate.sendEmptyMessageDelayed(UPDATE_UI_ACTION,
 							UPDATE_DELAY);
 				}
 			};
-		};
-		// Service handler
-		handlerService = new Handler() {
-			public void handleMessage(android.os.Message msg) {
-				if (msg.what == SERVICE_START_ACTION) {
-					// Start Service
-					handlerService.sendEmptyMessageDelayed(
-							SERVICE_START_ACTION, TimeClient.INTERVAL_LONG);
-					Main.this.startService(new Intent(Main.this,
-							TimeService.class));
-				}
-			}
 		};
 	}
 
 	private void setReceiver() {
 		// Setup broadcast receiver
-		receiver = new BroadcastReceiver() {
+		m_receiver = new BroadcastReceiver() {
 			@Override
 			public void onReceive(Context context, Intent intent) {
 				TimeResult result = TimeResult.fromBundle(intent.getExtras());
@@ -121,30 +160,30 @@ public class Main extends Activity {
 
 	private void updateResultList(TimeResult result) {
 		boolean modified = false;
-		int index = time_list.indexOf(result);
+		int index = m_time_list.indexOf(result);
 		if (index >= 0) {
 			// found a match
 			// replace the new one if the latest is better than previous result.
-			TimeResult pre = time_list.get(index);
+			TimeResult pre = m_time_list.get(index);
 			if (pre.accuracy > result.accuracy) {
-				time_list.set(index, result);
+				m_time_list.set(index, result);
 				modified = true;
 			}
 		} else {
 			// add a new result
-			time_list.add(result);
+			m_time_list.add(result);
 			modified = true;
 		}
 		if (modified) {
 			// Sort the time list by accuracy
-			Collections.sort(time_list);
+			Collections.sort(m_time_list);
 			updateUI();
 		}
 	}
 
 	private void updateUI() {
-		textPhoneTime.setText(Util.formatDateTime(System.currentTimeMillis(),
+		m_textPhoneTime.setText(Util.formatDateTime(System.currentTimeMillis(),
 				Util.DateFormatStyle.FULL));
-		time_result_adapter.notifyDataSetChanged();
+		m_time_result_adapter.notifyDataSetChanged();
 	}
 }

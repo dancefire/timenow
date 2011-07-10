@@ -22,7 +22,7 @@ public abstract class GpsTimeClient extends TimeClient implements
 	private LocationManager locationManager = null;
 
 	public GpsTimeClient() {
-		this.source = TIME_GPS;
+		this.m_source = TIME_GPS;
 		locationManager = (LocationManager) TimeApplication.getAppContext()
 				.getSystemService(Context.LOCATION_SERVICE);
 	}
@@ -57,7 +57,7 @@ public abstract class GpsTimeClient extends TimeClient implements
 	@Override
 	protected void onStart() {
 		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
-				interval, 0, this);
+				m_interval, 0, this);
 		Log.d(Main.TAG, "GPS Client is started.");
 	}
 

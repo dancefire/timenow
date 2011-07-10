@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string-array name="ntp_server_list">
+		<item>pool.ntp.org</item>
+		<item>au.pool.ntp.org</item>
+	</string-array>
+
+</resources>
