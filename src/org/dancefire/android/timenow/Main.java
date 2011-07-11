@@ -19,6 +19,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -34,6 +36,7 @@ public class Main extends Activity {
 	private TextView m_textPhoneTime;
 	private ListView m_listSourceTime;
 	private TimeResultAdapter m_time_result_adapter;
+	private boolean m_show_toast = false;
 
 	private static final int UPDATE_DELAY = 1000;
 
@@ -53,6 +56,15 @@ public class Main extends Activity {
 		m_listSourceTime = (ListView) findViewById(R.id.list_time);
 		m_time_result_adapter = new TimeResultAdapter(this, this.m_time_list);
 		m_listSourceTime.setAdapter(m_time_result_adapter);
+		
+		m_textPhoneTime.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				m_show_toast = !m_show_toast;
+				sendBroadcast(new Intent(TimeService.TIME_TOAST_ACTION).putExtra(TimeService.SHOW_TOAST, m_show_toast));
+			}
+		});
 	}
 
 	@Override
@@ -104,6 +116,9 @@ public class Main extends Activity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		Log.w(Main.TAG, item.getItemId() + ": " + item.toString());
 		switch (item.getItemId()) {
+		case R.id.menu_synchronize:
+			startActivity(new Intent(android.provider.Settings.ACTION_DATE_SETTINGS));
+			break;
 		case R.id.menu_setting:
 			Intent intent_pref = new Intent().setClass(this,
 					TimePreferenceActivity.class);

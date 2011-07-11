@@ -11,13 +11,13 @@ import org.dancefire.android.timenow.TimeApplication;
 public final class Util {
 
 	/* Formate Time Span */
-	private static final long TIME_ONE_SECOND = 1000;
-	private static final long TIME_ONE_MINUTE = TIME_ONE_SECOND * 60;
-	private static final long TIME_ONE_HOUR = TIME_ONE_MINUTE * 60;
-	private static final long TIME_ONE_DAY = TIME_ONE_HOUR * 24;
-	private static final long TIME_ONE_WEEK = TIME_ONE_DAY * 7;
-	private static final long TIME_ONE_MONTH = TIME_ONE_DAY * 30;
-	private static final long TIME_ONE_YEAR = TIME_ONE_DAY * 365;
+	public static final long TIME_ONE_SECOND = 1000;
+	public static final long TIME_ONE_MINUTE = TIME_ONE_SECOND * 60;
+	public static final long TIME_ONE_HOUR = TIME_ONE_MINUTE * 60;
+	public static final long TIME_ONE_DAY = TIME_ONE_HOUR * 24;
+	public static final long TIME_ONE_WEEK = TIME_ONE_DAY * 7;
+	public static final long TIME_ONE_MONTH = TIME_ONE_DAY * 30;
+	public static final long TIME_ONE_YEAR = TIME_ONE_DAY * 365;
 
 	private static final long[] TIME_BOUND = { 1, TIME_ONE_SECOND,
 			TIME_ONE_MINUTE, TIME_ONE_HOUR, TIME_ONE_DAY, TIME_ONE_WEEK,
@@ -64,14 +64,17 @@ public final class Util {
 	/* Format Date Time */
 	private static final SimpleDateFormat[] DATE_FORMATS = {
 			new SimpleDateFormat(), new SimpleDateFormat("HH:mm:ss.SSS"),
-			new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"), };
+			new SimpleDateFormat("yyyy-MM-dd HH:mm"),
+			new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"),
+			};
 
 	private static final int DATE_FORMAT_DEFAULT = 0;
 	private static final int DATE_FORMAT_TIME_ONLY = 1;
-	private static final int DATE_FORMAT_FULL = 2;
+	private static final int DATE_FORMAT_WITHOUT_SECOND = 2;
+	private static final int DATE_FORMAT_FULL = 3;
 
 	public enum DateFormatStyle {
-		DEFAULT, TIME_ONLY, FULL
+		DEFAULT, TIME_ONLY, WITHOUT_SECOND, FULL
 	};
 
 	public static String formatDateTime(long time, DateFormatStyle style) {
@@ -80,6 +83,8 @@ public final class Util {
 		case TIME_ONLY:
 			index = DATE_FORMAT_TIME_ONLY;
 			break;
+		case WITHOUT_SECOND:
+			index = DATE_FORMAT_WITHOUT_SECOND;
 		case FULL:
 			index = DATE_FORMAT_FULL;
 			break;

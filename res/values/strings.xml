@@ -83,4 +83,8 @@
 	
 	<string name="about_title">About Time Now</string>
 	<string name="about_message">This is an app made by Tao Wang (dancefire@gmail.com).</string>
+	
+	<string name="toast_message">Please set current time to</string>
+	<string name="toast_message_ok">Local time error is</string>
+	<string name="menu_synchronize">Synchronize</string>
 </resources>

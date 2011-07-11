@@ -10,6 +10,8 @@ import org.dancefire.android.timenow.timeclient.GpsTimeClient;
 import org.dancefire.android.timenow.timeclient.NtpTimeClient;
 import org.dancefire.android.timenow.timeclient.TimeClient;
 import org.dancefire.android.timenow.timeclient.TimeResult;
+import org.dancefire.android.timenow.timeclient.Util;
+import org.dancefire.android.timenow.timeclient.Util.DateFormatStyle;
 
 import android.app.Service;
 import android.content.BroadcastReceiver;
@@ -21,21 +23,34 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.TextView;
+import android.widget.Toast;
 
 public class TimeService extends Service {
 	public static final String TIME_STATUS_UPDATE_ACTION = "org.dancefire.android.action.TIME_STATUS_UPDATE_ACTION";
 	public static final String TIME_UI_ACTION = "org.dancefire.android.action.TIME_UI_ACTION";
+	public static final String TIME_TOAST_ACTION = "org.dancefire.android.action.TIME_TOAST_ACTION";
 	public static final String UPDATE_ACTION = "action";
 	public static final String IS_VISIBLE = "is_visible";
-	
-	private static final int REPEAT_ACTION = 0;
+	public static final String SHOW_TOAST = "show_toast";
 
-	ArrayList<TimeClient> m_clients = new ArrayList<TimeClient>();
-	BroadcastReceiver m_receiver_changed = null;
-	BroadcastReceiver m_receiver_ui = null;
-	String m_current_host = null;
-	SharedPreferences m_pref = null;
-	Handler m_handler_repeat = null;
+	private static final int REPEAT_ACTION = 0;
+	private static final int TOAST_ACTION = 1;
+
+	private static final int TOAST_LENGTH_SHORT = 1000;
+
+	private ArrayList<TimeClient> m_clients = new ArrayList<TimeClient>();
+	private BroadcastReceiver m_receiver_changed = null;
+	private BroadcastReceiver m_receiver_ui = null;
+	private BroadcastReceiver m_receiver_toast = null;
+	private SharedPreferences m_pref = null;
+	private Handler m_handler_repeat = null;
+	private Handler m_handler_toast = null;
+	private Toast m_toast = null;
+	private TimeResult m_best_result = null;
 
 	@Override
 	public IBinder onBind(Intent intent) {
@@ -52,19 +67,34 @@ public class TimeService extends Service {
 		registerReceiver(m_receiver_changed, new IntentFilter(
 				TIME_STATUS_UPDATE_ACTION));
 		registerReceiver(m_receiver_ui, new IntentFilter(TIME_UI_ACTION));
+		registerReceiver(m_receiver_toast, new IntentFilter(TIME_TOAST_ACTION));
 
 		// Service handler
 		m_handler_repeat = new Handler() {
 			public void handleMessage(android.os.Message msg) {
 				if (msg.what == REPEAT_ACTION) {
-					// start all clients
-					updateClientStatus();
 					// repeat
 					m_handler_repeat.sendEmptyMessageDelayed(REPEAT_ACTION,
 							TimeClient.INTERVAL_LONG);
+					// start all clients
+					updateClientStatus();
 				}
 			}
 		};
+
+		// Toast handler
+		m_handler_toast = new Handler() {
+			public void handleMessage(android.os.Message msg) {
+				if (msg.what == TOAST_ACTION) {
+					// repeat
+					m_handler_toast.sendEmptyMessageDelayed(TOAST_ACTION,
+							TOAST_LENGTH_SHORT);
+					showToast();
+				}
+			}
+		};
+
+		createToast();
 
 		update();
 
@@ -83,6 +113,10 @@ public class TimeService extends Service {
 		// Unregister Receiver
 		unregisterReceiver(m_receiver_changed);
 		unregisterReceiver(m_receiver_ui);
+		unregisterReceiver(m_receiver_toast);
+
+		m_handler_repeat.removeMessages(REPEAT_ACTION);
+		m_handler_toast.removeMessages(TOAST_ACTION);
 
 		Log.d(Main.TAG, "Time Service is stopped.");
 		super.onDestroy();
@@ -93,6 +127,14 @@ public class TimeService extends Service {
 		Intent intent = new Intent(Main.TIME_UPDATE_ACTION);
 		intent.putExtras(result.toBundle());
 		sendBroadcast(intent);
+		// save best result
+		if (m_best_result == null) {
+			m_best_result = result;
+		} else {
+			if (m_best_result.accuracy > result.accuracy) {
+				m_best_result = result;
+			}
+		}
 	}
 
 	private void update() {
@@ -221,15 +263,77 @@ public class TimeService extends Service {
 		m_receiver_ui = new BroadcastReceiver() {
 			@Override
 			public void onReceive(Context context, Intent intent) {
-				boolean is_showed = intent.getBooleanExtra(IS_VISIBLE, true);
-				if (is_showed) {
-					m_handler_repeat.sendEmptyMessage(0);
+				boolean is_visible = intent.getBooleanExtra(IS_VISIBLE, true);
+				if (is_visible) {
+					m_handler_repeat.sendEmptyMessage(REPEAT_ACTION);
 				} else {
-					m_handler_repeat.removeMessages(0);
+					m_handler_repeat.removeMessages(REPEAT_ACTION);
 				}
 				update();
 			}
 		};
+		// Setup broadcast receiver of Toast
+		m_receiver_toast = new BroadcastReceiver() {
+			@Override
+			public void onReceive(Context context, Intent intent) {
+				// start or stop toast
+				boolean show_toast = intent.getBooleanExtra(SHOW_TOAST, true);
+				if (show_toast) {
+					m_handler_toast.sendEmptyMessage(TOAST_ACTION);
+				} else {
+					m_handler_toast.removeMessages(TOAST_ACTION);
+				}
+			}
+		};
+
+	}
+
+	/* Toast */
+	private void createToast() {
+		m_toast = new Toast(this);
+		m_toast.setDuration(Toast.LENGTH_SHORT);
+		m_toast.setGravity(Gravity.BOTTOM | Gravity.RIGHT, 10, 0);
+		m_toast.setMargin(0.02f, 0.02f);
+		LayoutInflater inflater = (LayoutInflater) (getSystemService(Context.LAYOUT_INFLATER_SERVICE));
+		View toast_view = inflater.inflate(R.layout.toast, null);
+		m_toast.setView(toast_view);
+	}
+
+	private void showToast() {
+		if (m_toast != null && m_best_result != null) {
+			TextView tvLabel = (TextView) m_toast.getView().findViewById(
+					R.id.toast_label);
+			TextView tvTime = (TextView) m_toast.getView().findViewById(
+					R.id.toast_message);
+
+			long diff = m_best_result.getLocalTimeError();
+			// Only show toast when the time error is larger than 30 seconds
+			long thirty_seconds = 30 * Util.TIME_ONE_SECOND;
+			if (Math.abs(diff) > thirty_seconds) {
+				long diff_second = diff % (Util.TIME_ONE_MINUTE);
+				// make sure the time suggestion is always make the error less
+				// 30 seconds
+				long offset = 0;
+				if (diff_second > thirty_seconds) {
+					offset = Util.TIME_ONE_MINUTE - diff_second;
+				} else if (diff_second < -thirty_seconds) {
+					offset = -Util.TIME_ONE_MINUTE - diff_second;
+				}
+
+				long new_time = m_best_result.getCurrentSourceTime() + offset;
+
+				tvTime.setText(Util.formatDateTime(new_time,
+						DateFormatStyle.WITHOUT_SECOND));
+			} else {
+				// Stop toast handler
+				m_handler_toast.removeMessages(TOAST_ACTION);
+				// Show new local time error
+				tvLabel.setText(R.string.toast_message_ok);
+				tvTime.setText(Util.getTimeSpanString(diff));
+			}
+			m_toast.cancel();
+			m_toast.show();
+		}
 	}
 
 }
