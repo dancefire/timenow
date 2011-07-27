@@ -89,7 +89,7 @@ class TimeResultAdapter extends BaseAdapter {
 		sb1.append(Util.getTimeSpanString(item.getLocalTimeError()));
 		sb1.append(" ");
 		if (item.source == TimeClient.TIME_NTP) {
-			sb1.append(item.extra.getString(NtpTimeClient.NAME));
+			sb1.append(item.extra.getString(NtpTimeClient.IP));
 		} else {
 			sb1.append(item.id);
 		}

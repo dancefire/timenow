@@ -2,10 +2,12 @@ package org.dancefire.android.timenow.service;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.text.DateFormat;
 import java.util.ArrayList;
 
 import org.dancefire.android.timenow.Main;
 import org.dancefire.android.timenow.R;
+import org.dancefire.android.timenow.TimePreference;
 import org.dancefire.android.timenow.timeclient.GpsTimeClient;
 import org.dancefire.android.timenow.timeclient.NtpTimeClient;
 import org.dancefire.android.timenow.timeclient.TimeClient;
@@ -19,6 +21,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Handler;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
@@ -88,7 +92,7 @@ public class TimeService extends Service {
 				if (msg.what == TOAST_ACTION) {
 					// repeat
 					m_handler_toast.sendEmptyMessageDelayed(TOAST_ACTION,
-							TOAST_LENGTH_SHORT);
+							TOAST_LENGTH_SHORT - 100);
 					showToast();
 				}
 			}
@@ -147,9 +151,35 @@ public class TimeService extends Service {
 		updateGpsClients();
 	}
 
+	private boolean isWifiAvailable() {
+		ConnectivityManager cm = (ConnectivityManager) this
+				.getSystemService(CONNECTIVITY_SERVICE);
+		NetworkInfo info = cm.getActiveNetworkInfo();
+		if (info == null || cm.getBackgroundDataSetting()) {
+			return false;
+		}
+
+		if (info.getType() == ConnectivityManager.TYPE_WIFI) {
+			return info.isConnected();
+		} else {
+			return false;
+		}
+	}
+
 	private void updateClientStatus() {
-		boolean ntp_enabled = m_pref.getBoolean("pref_ntp_enable", true);
-		boolean gps_enabled = m_pref.getBoolean("pref_gps_enable", true);
+		boolean ntp_enabled = m_pref
+				.getBoolean(TimePreference.NTP_ENABLE, true);
+		boolean gps_enabled = m_pref
+				.getBoolean(TimePreference.GPS_ENABLE, true);
+
+		if (ntp_enabled) {
+			// Check WIFI-only
+			boolean ntp_wifi_only = m_pref.getBoolean(
+					TimePreference.NTP_WIFI_ONLY, false);
+			if (ntp_wifi_only) {
+				ntp_enabled = isWifiAvailable();
+			}
+		}
 
 		for (TimeClient c : m_clients) {
 			// NTP
@@ -180,8 +210,8 @@ public class TimeService extends Service {
 	}
 
 	private void updateNtpClients() {
-		String new_host = m_pref.getString("pref_ntp_server", this
-				.getString(R.string.pref_ntp_server_default));
+		String new_host = m_pref.getString(TimePreference.NTP_SERVER,
+				this.getString(R.string.pref_ntp_server_default));
 		ArrayList<TimeClient> new_clients = new ArrayList<TimeClient>();
 
 		// Clean invalidate clients
@@ -300,40 +330,31 @@ public class TimeService extends Service {
 	}
 
 	private void showToast() {
-		if (m_toast != null && m_best_result != null) {
-			TextView tvLabel = (TextView) m_toast.getView().findViewById(
-					R.id.toast_label);
-			TextView tvTime = (TextView) m_toast.getView().findViewById(
+		if (m_toast != null && m_best_result != null
+				&& m_pref.getBoolean(TimePreference.TOAST_ENABLE, true)) {
+			TextView tvMessage = (TextView) m_toast.getView().findViewById(
 					R.id.toast_message);
-
+			
 			long diff = m_best_result.getLocalTimeError();
+			long t = m_best_result.getCurrentSourceTime();
+			String date = DateFormat.getDateInstance(DateFormat.LONG).format(t);
+			String time = Util.formatDateTime(t, DateFormatStyle.TIME_ONLY);
+			String offset = Util.getTimeSpanNumericString(diff);
+
 			// Only show toast when the time error is larger than 30 seconds
 			long thirty_seconds = 30 * Util.TIME_ONE_SECOND;
 			if (Math.abs(diff) > thirty_seconds) {
-				long diff_second = diff % (Util.TIME_ONE_MINUTE);
-				// make sure the time suggestion is always make the error less
-				// 30 seconds
-				long offset = 0;
-				if (diff_second > thirty_seconds) {
-					offset = Util.TIME_ONE_MINUTE - diff_second;
-				} else if (diff_second < -thirty_seconds) {
-					offset = -Util.TIME_ONE_MINUTE - diff_second;
-				}
-
-				long new_time = m_best_result.getCurrentSourceTime() + offset;
-
-				tvTime.setText(Util.formatDateTime(new_time,
-						DateFormatStyle.WITHOUT_SECOND));
+				String fmt = getString(R.string.toast_message);
+				tvMessage.setText(String.format(fmt, date, time, offset));
 			} else {
 				// Stop toast handler
 				m_handler_toast.removeMessages(TOAST_ACTION);
 				// Show new local time error
-				tvLabel.setText(R.string.toast_message_ok);
-				tvTime.setText(Util.getTimeSpanString(diff));
+				String fmt = getString(R.string.toast_message_ok);
+				tvMessage.setText(String.format(fmt, offset));
 			}
-			m_toast.cancel();
+			//m_toast.cancel();
 			m_toast.show();
 		}
 	}
-
 }

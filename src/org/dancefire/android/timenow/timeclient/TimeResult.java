@@ -3,7 +3,7 @@ package org.dancefire.android.timenow.timeclient;
 import android.os.Bundle;
 import android.os.SystemClock;
 
-public class TimeResult implements Comparable<TimeResult>{
+public class TimeResult implements Comparable<TimeResult> {
 	public String id;
 	public int source;
 	public long local_time;
@@ -38,6 +38,33 @@ public class TimeResult implements Comparable<TimeResult>{
 		long diff = source_time - local_uptime;
 		long current = SystemClock.elapsedRealtime() + diff;
 		return current;
+	}
+
+	/**
+	 * This function is for helping time setting in rootless mode. Due to
+	 * current android bug, the second will not be reset, so we have to get best
+	 * proximate time.
+	 * 
+	 * @return best proximate time
+	 */
+	public long getSuggestionLocalTime() {
+		long diff = this.getLocalTimeError();
+		// Only show toast when the time error is larger than 30 seconds
+		long new_time = this.getCurrentSourceTime();
+		long thirty_seconds = 30 * Util.TIME_ONE_SECOND;
+		long diff_second = diff % (Util.TIME_ONE_MINUTE);
+		// make sure the time suggestion is always make the error less
+		// 30 seconds
+		long offset = 0;
+		if (diff_second > thirty_seconds) {
+			offset = Util.TIME_ONE_MINUTE - diff_second;
+		} else if (diff_second < -thirty_seconds) {
+			offset = -Util.TIME_ONE_MINUTE - diff_second;
+		}
+
+		new_time = this.getCurrentSourceTime() + offset;
+
+		return new_time;
 	}
 
 	public Bundle toBundle() {

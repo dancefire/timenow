@@ -1,5 +1,6 @@
 package org.dancefire.android.timenow.timeclient;
 
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -7,6 +8,8 @@ import java.util.TimeZone;
 
 import org.dancefire.android.timenow.R;
 import org.dancefire.android.timenow.TimeApplication;
+
+import android.text.format.DateUtils;
 
 public final class Util {
 
@@ -61,9 +64,22 @@ public final class Util {
 		return prefix + " " + text + " " + postfix;
 	}
 
+	public static String getTimeSpanNumericString(long timespan) {
+		StringBuilder sb = new StringBuilder();
+		if (timespan < 0) {
+			sb.append('-');
+			timespan = -timespan;
+		}
+		sb.append(DateUtils.formatElapsedTime(timespan/1000));
+		sb.append('.');
+		sb.append(new DecimalFormat("000").format(timespan%1000));
+
+		return sb.toString();
+	}
+
 	/* Format Date Time */
 	private static final SimpleDateFormat[] DATE_FORMATS = {
-			new SimpleDateFormat(), new SimpleDateFormat("HH:mm:ss.SSS"),
+			new SimpleDateFormat(), new SimpleDateFormat("HH:mm:ss"),
 			new SimpleDateFormat("yyyy-MM-dd HH:mm"),
 			new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"),
 			};

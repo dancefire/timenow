@@ -11,12 +11,24 @@
 			android:dialogIcon="@drawable/ntp_32" android:defaultValue="@string/pref_ntp_server_default"
 			android:key="pref_ntp_server" android:dialogTitle="@string/pref_ntp_server"
 			android:title="@string/pref_ntp_server" android:dialogMessage="@string/pref_ntp_server_message" android:summary="@string/pref_ntp_server_default"></EditTextPreference>
+		<CheckBoxPreference android:key="pref_ntp_wifionly" android:summaryOn="@string/pref_ntp_wifionly_summary_on" android:summaryOff="@string/pref_ntp_wifionly_summary_off" android:title="@string/pref_ntp_wifionly_title" android:dependency="pref_ntp_enable"></CheckBoxPreference>
 	</PreferenceCategory>
 	<PreferenceCategory android:key="pref_gps_group"
 		android:title="@string/pref_gps_title">
 		<CheckBoxPreference android:title="@string/pref_gps_enable"
 			android:key="pref_gps_enable" android:summaryOn="@string/pref_gps_summary_enabled"
 			android:summaryOff="@string/pref_gps_disabled" android:defaultValue="@string/pref_gps_enable_default"></CheckBoxPreference>
+	</PreferenceCategory>
+	<PreferenceCategory android:title="@string/pref_generic_group_title" android:key="pref_generic_group">
+		<CheckBoxPreference android:key="pref_generic_toast" android:title="@string/pref_generic_toast_title" android:summary="@string/pref_generic_toast_summary"></CheckBoxPreference>
+		<CheckBoxPreference android:key="pref_generic_autosync" android:title="@string/pref_generic_autosync_title" android:summary="@string/pref_generic_autosync_summary"></CheckBoxPreference>
+		<CheckBoxPreference android:key="pref_generic_rootless" android:title="@string/pref_generic_rootless_title" android:summary="@string/pref_generic_rootless_summary"></CheckBoxPreference>
+		<CheckBoxPreference android:key="pref_generic_autotimezone" android:title="@string/pref_generic_autotimezone_title" android:summary="@string/pref_generic_autotimezone_summary"></CheckBoxPreference>
+		<CheckBoxPreference android:key="pref_generic_synconboot" android:title="@string/pref_generic_synconboot_title" android:summary="@string/pref_generic_synconboot_summary"></CheckBoxPreference>
+	</PreferenceCategory>
+	<PreferenceCategory android:title="@string/pref_help_group_title" android:key="pref_help_group">
+		<PreferenceScreen android:title="Screen" android:key="pref_help_screen"></PreferenceScreen>
+		<Preference android:key="pref_help_pref" android:summary="only preference" android:title="Preference"></Preference>
 	</PreferenceCategory>
 
 </PreferenceScreen>

@@ -49,7 +49,11 @@ public class Main extends Activity {
 		setReceiver();
 
 		// Start Service
-		startService(new Intent(this, TimeService.class));
+		new Thread(){
+			public void run() {
+				startService(new Intent(Main.this, TimeService.class));
+			};
+		}.start();
 
 
 		m_textPhoneTime = (TextView) findViewById(R.id.phone_time);
@@ -121,7 +125,7 @@ public class Main extends Activity {
 			break;
 		case R.id.menu_setting:
 			Intent intent_pref = new Intent().setClass(this,
-					TimePreferenceActivity.class);
+					TimePreference.class);
 			this.startActivityForResult(intent_pref, PREFERENCE_UPDATE);
 			break;
 		case R.id.menu_about:

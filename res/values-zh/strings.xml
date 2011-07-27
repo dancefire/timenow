@@ -55,4 +55,10 @@
 	<color name="text_background_normal">#f69c00</color>
 	<color name="text_background_focused">#a2f600</color>
 	<color name="text_foreground_dark">#000000</color>
+	<string name="toast_message">"请将时间设置为
+%1$s %2$s
+(时间差: %3$s)"
+	</string>
+	<string name="toast_message_ok">"时钟已同步！
+(时间差: %1$s)"</string>
 </resources>

@@ -84,7 +84,26 @@
 	<string name="about_title">About Time Now</string>
 	<string name="about_message">This is an app made by Tao Wang (dancefire@gmail.com).</string>
 	
-	<string name="toast_message">Please set current time to</string>
-	<string name="toast_message_ok">Local time error is</string>
+	<string name="toast_message">"Please set time to
+%1$s %2$s
+(offset: %3$s)"
+	</string>
+	<string name="toast_message_ok">"Time is synchronized!
+(offset: %1$s)"</string>
 	<string name="menu_synchronize">Synchronize</string>
+	<string name="pref_ntp_wifionly_summary_on">Synchronize time only when Wi-Fi connection is available.</string>
+	<string name="pref_ntp_wifionly_summary_off">Synchronize time whenever Wi-Fi connection is available.</string>
+	<string name="pref_ntp_wifionly_title">Only use NTP on Wi-Fi</string>
+	<string name="pref_generic_group_title">General</string>
+	<string name="pref_generic_toast_title">Enable Toast</string>
+	<string name="pref_generic_toast_summary">Use Toast to help time setting in rootless mode</string>
+	<string name="pref_generic_autosync_title">Auto Sync</string>
+	<string name="pref_generic_autosync_summary">Automatically synchronize the time in the background.</string>
+	<string name="pref_generic_rootless_title">Rootless Mode Only</string>
+	<string name="pref_generic_rootless_summary">Force to use rootless mode, even the device is rooted.</string>
+	<string name="pref_generic_autotimezone_title">Auto detect Time Zone</string>
+	<string name="pref_generic_autotimezone_summary">Automatically detect time zone based on current location or network information.</string>
+	<string name="pref_generic_synconboot_title">Sync on boot</string>
+	<string name="pref_generic_synconboot_summary">Synchronize time after the device is booted.</string>
+	<string name="pref_help_group_title">Help</string>
 </resources>
