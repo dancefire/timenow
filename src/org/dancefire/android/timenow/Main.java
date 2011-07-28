@@ -58,9 +58,11 @@ public class Main extends Activity {
 
 			@Override
 			public void onClick(View v) {
-				m_show_toast = !m_show_toast;
-				sendBroadcast(new Intent(TimeService.TIME_TOAST_ACTION)
-						.putExtra(TimeService.SHOW_TOAST, m_show_toast));
+				if (m_time_list != null && m_time_list.size() > 0) {
+					m_show_toast = !m_show_toast;
+					sendBroadcast(new Intent(TimeService.TIME_TOAST_ACTION)
+							.putExtra(TimeService.SHOW_TOAST, m_show_toast));
+				}
 			}
 		});
 

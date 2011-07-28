@@ -3,10 +3,12 @@ package org.dancefire.android.timenow;
 import org.dancefire.android.timenow.service.TimeService;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.Preference;
-import android.preference.PreferenceActivity;
 import android.preference.Preference.OnPreferenceChangeListener;
+import android.preference.PreferenceActivity;
+import android.preference.PreferenceManager;
 
 public class TimePreference extends PreferenceActivity {
 	public static final String NTP_ENABLE = "pref_ntp_enable";
@@ -19,6 +21,7 @@ public class TimePreference extends PreferenceActivity {
 	public static final String AUTO_TIMEZONE = "pref_generic_autotimezone";
 	public static final String SYNC_ON_BOOT = "pref_generic_synconboot";
 
+	private static SharedPreferences m_prefs = null;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -37,11 +40,19 @@ public class TimePreference extends PreferenceActivity {
 						return false;
 					}
 				});
+		m_prefs = getPreferences(MODE_PRIVATE);
 	}
 
 	@Override
 	protected void onPause() {
 		sendBroadcast(new Intent(TimeService.TIME_STATUS_UPDATE_ACTION));
 		super.onPause();
+	}
+	
+	public static SharedPreferences get() {
+		if (m_prefs == null) {
+			m_prefs = PreferenceManager.getDefaultSharedPreferences(TimeApplication.getAppContext());
+		}
+		return m_prefs;
 	}
 }
