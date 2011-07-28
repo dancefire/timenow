@@ -142,6 +142,7 @@ public class TimeService extends Service {
 			public void onReceive(Context context, Intent intent) {
 				// start or stop toast
 				boolean show_toast = intent.getBooleanExtra(SHOW_TOAST, true);
+				Log.v(Main.TAG, "TimeService.m_receiver_toast: " + show_toast);
 
 				if (show_toast) {
 					m_assistant.start();

@@ -39,7 +39,7 @@ public class Main extends Activity {
 	private TimeResultAdapter m_time_result_adapter;
 	private boolean m_show_toast = false;
 
-	private static final int UPDATE_DELAY = 200;
+	private static final int UPDATE_DELAY = 1000;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -124,6 +124,8 @@ public class Main extends Activity {
 		Log.w(Main.TAG, item.getItemId() + ": " + item.toString());
 		switch (item.getItemId()) {
 		case R.id.menu_synchronize:
+			sendBroadcast(new Intent(TimeService.TIME_TOAST_ACTION).putExtra(
+					TimeService.SHOW_TOAST, true));
 			startActivity(new Intent(
 					android.provider.Settings.ACTION_DATE_SETTINGS));
 			break;

@@ -8,6 +8,7 @@ import org.dancefire.android.timenow.timeclient.Util.DateFormatStyle;
 
 import android.content.Context;
 import android.os.Handler;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,7 +18,7 @@ import android.widget.Toast;
 public abstract class SetTimeAssistant {
 	private Context m_context;
 	private Handler m_handler_toast = null;
-	private boolean m_enable_toast = true;
+	private boolean m_enable_toast = false;
 	private Toast m_toast = null;
 
 	/* Constants */
@@ -62,6 +63,7 @@ public abstract class SetTimeAssistant {
 				m_handler_toast.removeMessages(TOAST_ACTION);
 				m_toast.cancel();
 			}
+			Log.v(Main.TAG, "SetTimeAssistant.enableToast(" + m_enable_toast + " => " + enable + ")");
 			m_enable_toast = enable;
 		}
 	}
@@ -102,13 +104,14 @@ public abstract class SetTimeAssistant {
 				m_toast.setDuration(Toast.LENGTH_SHORT);
 			} else {
 				// Stop toast handler
-				m_handler_toast.removeMessages(TOAST_ACTION);
+				enableToast(false);
 				// Show new local time error
 				String fmt = m_context.getString(R.string.toast_message_ok);
 				tvMessage.setText(String.format(fmt, offset));
 				m_toast.setDuration(Toast.LENGTH_LONG);
 			}
 			m_toast.show();
+			Log.v(Main.TAG, "SetTimeAssistant.showToast()");
 		}
 	}
 }
