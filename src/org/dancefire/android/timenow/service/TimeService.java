@@ -334,7 +334,7 @@ public class TimeService extends Service {
 				&& m_pref.getBoolean(TimePreference.TOAST_ENABLE, true)) {
 			TextView tvMessage = (TextView) m_toast.getView().findViewById(
 					R.id.toast_message);
-			
+
 			long diff = m_best_result.getLocalTimeError();
 			long t = m_best_result.getCurrentSourceTime();
 			String date = DateFormat.getDateInstance(DateFormat.LONG).format(t);
@@ -353,7 +353,6 @@ public class TimeService extends Service {
 				String fmt = getString(R.string.toast_message_ok);
 				tvMessage.setText(String.format(fmt, offset));
 			}
-			//m_toast.cancel();
 			m_toast.show();
 		}
 	}

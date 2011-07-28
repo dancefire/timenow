@@ -1,5 +1,6 @@
 package org.dancefire.android.timenow;
 
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -38,7 +39,7 @@ public class Main extends Activity {
 	private TimeResultAdapter m_time_result_adapter;
 	private boolean m_show_toast = false;
 
-	private static final int UPDATE_DELAY = 1000;
+	private static final int UPDATE_DELAY = 200;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -48,27 +49,23 @@ public class Main extends Activity {
 		setHandler();
 		setReceiver();
 
-		// Start Service
-		new Thread(){
-			public void run() {
-				startService(new Intent(Main.this, TimeService.class));
-			};
-		}.start();
-
-
 		m_textPhoneTime = (TextView) findViewById(R.id.phone_time);
 		m_listSourceTime = (ListView) findViewById(R.id.list_time);
 		m_time_result_adapter = new TimeResultAdapter(this, this.m_time_list);
 		m_listSourceTime.setAdapter(m_time_result_adapter);
-		
+
 		m_textPhoneTime.setOnClickListener(new OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
 				m_show_toast = !m_show_toast;
-				sendBroadcast(new Intent(TimeService.TIME_TOAST_ACTION).putExtra(TimeService.SHOW_TOAST, m_show_toast));
+				sendBroadcast(new Intent(TimeService.TIME_TOAST_ACTION)
+						.putExtra(TimeService.SHOW_TOAST, m_show_toast));
 			}
 		});
+
+		// Start Service
+		startService(new Intent(Main.this, TimeService.class));
 	}
 
 	@Override
@@ -78,11 +75,14 @@ public class Main extends Activity {
 
 		// Begin message loop
 		m_handlerUIUpdate.sendEmptyMessage(UPDATE_UI_ACTION);
-		
-		//	Tell service the UI is visible now
-		sendBroadcast(new Intent(TimeService.TIME_UI_ACTION).putExtra(TimeService.IS_VISIBLE, true));
-		
+
+		// Tell service the UI is visible now
+		sendBroadcast(new Intent(TimeService.TIME_UI_ACTION).putExtra(
+				TimeService.IS_VISIBLE, true));
+
+		updateUI();
 		super.onResume();
+		TimeApplication.dismissPendingDialog();
 	}
 
 	@Override
@@ -94,12 +94,13 @@ public class Main extends Activity {
 		// stop message loop
 		m_handlerUIUpdate.removeMessages(UPDATE_UI_ACTION);
 
-		//	Tell service the UI is NOT visible now
-		sendBroadcast(new Intent(TimeService.TIME_UI_ACTION).putExtra(TimeService.IS_VISIBLE, false));
-		
+		// Tell service the UI is NOT visible now
+		sendBroadcast(new Intent(TimeService.TIME_UI_ACTION).putExtra(
+				TimeService.IS_VISIBLE, false));
+
 		super.onPause();
 	}
-	
+
 	@Override
 	protected void onDestroy() {
 		// Stop Service
@@ -121,7 +122,8 @@ public class Main extends Activity {
 		Log.w(Main.TAG, item.getItemId() + ": " + item.toString());
 		switch (item.getItemId()) {
 		case R.id.menu_synchronize:
-			startActivity(new Intent(android.provider.Settings.ACTION_DATE_SETTINGS));
+			startActivity(new Intent(
+					android.provider.Settings.ACTION_DATE_SETTINGS));
 			break;
 		case R.id.menu_setting:
 			Intent intent_pref = new Intent().setClass(this,
@@ -131,8 +133,8 @@ public class Main extends Activity {
 		case R.id.menu_about:
 			new AlertDialog.Builder(this).setTitle(R.string.about_title)
 					.setMessage(R.string.about_message)
-					.setIcon(R.drawable.icon).setNeutralButton(
-							android.R.string.ok, null).show();
+					.setIcon(R.drawable.icon)
+					.setNeutralButton(android.R.string.ok, null).show();
 			break;
 		default:
 			return super.onOptionsItemSelected(item);
@@ -143,8 +145,9 @@ public class Main extends Activity {
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == PREFERENCE_UPDATE) {
-			// SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
-			
+			// SharedPreferences pref =
+			// PreferenceManager.getDefaultSharedPreferences(this);
+
 		}
 		super.onActivityResult(requestCode, resultCode, data);
 	}
@@ -201,8 +204,12 @@ public class Main extends Activity {
 	}
 
 	private void updateUI() {
-		m_textPhoneTime.setText(Util.formatDateTime(System.currentTimeMillis(),
-				Util.DateFormatStyle.FULL));
+		long t = System.currentTimeMillis();
+		m_textPhoneTime.setText(DateFormat.getDateInstance(DateFormat.LONG)
+				.format(t)
+				+ " "
+				+ Util.formatDateTime(System.currentTimeMillis(),
+						Util.DateFormatStyle.TIME_ONLY));
 		m_time_result_adapter.notifyDataSetChanged();
 	}
 }

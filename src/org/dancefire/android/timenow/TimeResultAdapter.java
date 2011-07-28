@@ -3,12 +3,14 @@
  */
 package org.dancefire.android.timenow;
 
+import java.text.DateFormat;
 import java.util.ArrayList;
 
 import org.dancefire.android.timenow.timeclient.NtpTimeClient;
 import org.dancefire.android.timenow.timeclient.TimeClient;
 import org.dancefire.android.timenow.timeclient.TimeResult;
 import org.dancefire.android.timenow.timeclient.Util;
+import org.dancefire.android.timenow.timeclient.Util.DateFormatStyle;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -83,8 +85,10 @@ class TimeResultAdapter extends BaseAdapter {
 			holder.icon.setImageResource(R.drawable.icon);
 			break;
 		}
-		holder.title.setText(Util.formatDateTime(item.getCurrentSourceTime(),
-				Util.DateFormatStyle.FULL));
+		long t = item.getCurrentSourceTime();
+		holder.title.setText(DateFormat.getDateInstance(DateFormat.LONG).format(t) + " " + Util.formatDateTime(t, DateFormatStyle.TIME_ONLY));
+//		holder.title.setText(Util.formatDateTime(item.getCurrentSourceTime(),
+//				Util.DateFormatStyle.FULL));
 		StringBuilder sb1 = new StringBuilder();
 		sb1.append(Util.getTimeSpanString(item.getLocalTimeError()));
 		sb1.append(" ");

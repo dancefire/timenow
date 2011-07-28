@@ -59,9 +59,6 @@
 		<item quantity="other">years</item>
 	</plurals>
 
-	<color name="text_background_normal">#f69c00</color>
-	<color name="text_background_focused">#a2f600</color>
-	<color name="text_foreground_dark">#000000</color>
 	<string name="menu_setting">Settings</string>
 	<string name="menu_about">About</string>
 	<!-- Preferences -->

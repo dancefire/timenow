@@ -9,14 +9,12 @@
 	<LinearLayout android:id="@+id/linearLayout"
 		android:layout_width="wrap_content" android:layout_height="wrap_content"
 		android:orientation="vertical" android:layout_margin="10dp"
-		android:background="@color/text_background_normal" android:gravity="center_horizontal"
+		android:gravity="center_horizontal"
 		android:layout_gravity="center|center_horizontal">
-		<TextView android:textAppearance="?android:attr/textAppearanceMedium"
-			android:text="@string/default_time" android:id="@+id/phone_time"
-			android:background="@drawable/clock_text_background"
+		<TextView android:text="@string/default_time" android:id="@+id/phone_time"
 			android:layout_height="match_parent" android:layout_width="match_parent"
 			android:gravity="center|center_horizontal" android:layout_gravity="center|center_horizontal"
-			android:paddingLeft="10dp" android:paddingRight="10dp" android:textColor="@color/text_foreground_dark"></TextView>
+			android:textStyle="bold" android:paddingLeft="20dp" android:paddingRight="20dp" android:textSize="30sp" android:textColor="@android:color/primary_text_dark" android:background="@android:drawable/toast_frame"></TextView>
 	</LinearLayout>
 	<TextView android:layout_height="wrap_content" android:id="@+id/textView3"
 		android:layout_width="wrap_content" android:textAppearance="?android:attr/textAppearanceLarge"
